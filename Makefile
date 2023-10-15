@@ -1,42 +1,27 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/10/14 15:19:10 by ael-kace          #+#    #+#              #
-#    Updated: 2023/10/14 17:13:57 by ael-kace         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME = cub3D
 
-NAME = Cub3D
+SRC = main.c
 
-HEADER = cub3d.h
-
-SRC =	lib_tool/ft_strdup.c get_next_line/get_next_line.c \
-		get_next_line/get_next_line_utils.c
-
-OBJ = $(SRC:.c=.o)
+OBJ = ${SRC:.c=.o}
 
 CC = cc
 
-CFLAG = -Wall -Werror -Wextra
+RM = rm -rf
 
-all : $(NAME)
+CFLAGS = -Wall -Wextra -Ofast
 
-$(NAME) : $(OBJ) 
-	$(CC) $(CFLAG) $(OBJ) -o $(NAME) 
+all: ${NAME}
 
-%.o : %.c $(HEADER)
-	$(CC) $(CFLAG) -c $< -o $@
+${NAME}: ${OBJ}
+		 ${CC} ${CFLAGS} ${OBJ} MLX42/build/libmlx42.a -lglfw -L"/Users/zel-kach/homebrew/opt/glfw/lib" -o $@
 
-clean : 
-	rm -f $(OBJ)
+%.o: %.c cub3D.h
+		 ${CC} ${CFLAGS} -c $<
 
-fclean : clean
-	rm -f $(NAME)
+clean:
+		${RM} ${OBJ}
 
-re : fclean all
+fclean: clean
+		${RM} ${NAME}
 
-.PHONY = all clean fclean re
+re: fclean all
