@@ -1,40 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3d.h                                            :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/14 15:05:18 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/15 15:24:34 by ael-kace         ###   ########.fr       */
+/*   Created: 2023/10/15 15:21:18 by ael-kace          #+#    #+#             */
+/*   Updated: 2023/10/15 15:21:41 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CUB3D_h
-# define CUB3D_h
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 10
+# endif
 
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <math.h>
-# include <fcntl.h>
-# include "g_n_l/get_next_line.h"
 
-typedef struct  s_map
-{
-	char    **map;
-	int     map_x;
-	int     map_y;
-	char    *no;
-	char    *so;
-	char    *we;
-	char    *ea;
-	int     f;
-	int     c;
-}               t_map;
-
-/* ~~~~~~~~~~~~function lib_tool~~~~~~~~~~~~ */
-
-char	*ft_strdupp(const char *s1);
+char	*ft_strjoin(char *s1, char *s2);
+size_t	ft_strlen(char *s);
+int		ft_strchr(const char *s, char c);
+char	*ft_strdup(char *s1);
+char	*get_next_line(int fd);
 
 #endif
