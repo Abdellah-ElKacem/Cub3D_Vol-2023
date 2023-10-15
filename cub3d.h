@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:05:18 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/15 15:24:34 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/15 21:38:09 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ typedef struct  s_map
 
 /* ~~~~~~~~~~~~function lib_tool~~~~~~~~~~~~ */
 
-char	*ft_strdupp(const char *s1);
+char	*ft_strdup_gnl(const char *s1);
 
 #endif
