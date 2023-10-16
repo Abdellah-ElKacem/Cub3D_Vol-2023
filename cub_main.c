@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:03:12 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/15 21:47:18 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/16 21:54:11 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,45 +15,45 @@
 void	north_path(t_map *map, char *str, int *i)
 {
 	if (map->no)
-		return (write(2,"Error : Double Path :/", 23), exit(1));
+		return (write(2,"Error : Double Path :/\n", 24), exit(1));
 	while (str[*i] == ' ')
 		(*i)++;
 	map->no = ft_strdup_gnl(str + *i);
-	if (!map->no|| map->no[0] == '\0')
-		return (write(2,"Error : No Path Here :/", 24), exit(1));
+	if (map->no[0] == '\0')
+		return (write(2,"Error : No Path Here :/\n", 25), exit(1));
 }
 
 void	south_path(t_map *map, char *str, int *i)
 {
 	if (map->so)
-		return (write(2,"Error : Double Path :/", 23), exit(1));
+		return (write(2,"Error : Double Path :/\n", 24), exit(1));
 	while (str[*i] == ' ')
 		(*i)++;
 	map->so = ft_strdup_gnl(str + *i);
-	if (!map->so|| map->so[0] == '\0')
-		return (write(2,"Error : No Path Here :/", 24), exit(1));
+	if (map->so[0] == '\0')
+		return (write(2,"Error : No Path Here :/\n", 25), exit(1));
 }
 
 void	west_path(t_map *map, char *str, int *i)
 {
 	if (map->we)
-		return (write(2,"Error : Double Path :/", 23), exit(1));
+		return (write(2,"Error : Double Path :/\n", 24), exit(1));
 	while (str[*i] == ' ')
 		(*i)++;
 	map->we = ft_strdup_gnl(str + *i);
-	if (!map->we|| map->we[0] == '\0')
-		return (write(2,"Error : No Path Here :/", 24), exit(1));
+	if (map->we[0] == '\0')
+		return (write(2,"Error : No Path Here :/\n", 25), exit(1));
 }
 
 void	east_path(t_map *map, char *str, int *i)
 {
 	if (map->ea)
-		return (write(2,"Error : Double Path :/", 23), exit(1));
+		return (write(2,"Error : Double Path :/\n", 24), exit(1));
 	while (str[*i] == ' ')
 		(*i)++;
 	map->ea = ft_strdup_gnl(str + *i);
-	if (!map->ea || map->ea[0] == '\0')
-		return (write(2,"Error : No Path Here :/", 24), exit(1));
+	if (map->ea[0] == '\0')
+		return (write(2,"Error : No Path Here :/\n", 25), exit(1));
 }
 
 void	check_path(t_map *map, char *line, int *i)
@@ -68,6 +68,144 @@ void	check_path(t_map *map, char *line, int *i)
 		(*i += 2, east_path(map, line, i));
 	else
 		(write(2, "ERROR !", 8), exit(1));
+}
+
+void	put_on_the_right_place_f(t_map *map, char *str, int idx)
+{
+	if (!str)
+		return (write(2, "Error : of color path:/\n", 25), exit(1));
+	if (idx == 1)
+	{
+		if(map->f.r != -1)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+		map->f.r = ft_atoi(str);
+		if (map->f.r < 0 || map->f.r > 255)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+	}
+	else if (idx == 2)
+	{
+		map->f.g = ft_atoi(str);
+		if (map->f.g < 0 || map->f.g > 255)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+	}
+	else if (idx == 3)
+	{
+		map->f.b = ft_atoi(str);
+		if (map->f.b < 0 || map->f.b > 255)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+	}
+	else
+		return (write(2, "Error : of color path:/\n", 25), exit(1));
+}
+
+void	put_on_the_right_place_c(t_map *map, char *str, int idx)
+{
+	if (!str)
+		return (write(2, "Error : of color path:/\n", 25), exit(1));
+	if (idx == 1)
+	{
+		if(map->c.r != -1)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+		map->c.r = ft_atoi(str);
+		if (map->c.r < 0 || map->c.r > 255)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+	}
+	else if (idx == 2)
+	{
+		map->c.g = ft_atoi(str);
+		if (map->c.g < 0 || map->c.g > 255)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+	}
+	else if (idx == 3)
+	{
+		map->c.b = ft_atoi(str);
+		if (map->c.b < 0 || map->c.b > 255)
+			return (write(2, "Error : of color path:/\n", 25), exit(1));
+	}
+	else
+		return (write(2, "Error : of color path:/\n", 25), exit(1));
+}
+
+void	error_digit(char *line, int *i, int *len, int idx)
+{
+	if (!ft_isdigit(line[*i]))
+		return (write(2, "Error1 : of color path:/\n", 25), exit(1));
+	if (idx == 1)
+	{
+		(*len)++;
+		(*i)++;
+	}
+}
+void	check_v(int v)
+{
+	if (v != 2)
+		return (write(2, "Error : of color path:/\n", 25), exit(1));
+}
+
+void	put_colors_f(t_map *map, char *line, int *i)
+{
+	char	*str;
+	int		v;
+	int		idx;
+	int		len;
+	int		start;
+
+	v = 0;
+	idx = 1;
+	len = 0;
+	while (line[*i] == ' ')
+		(*i)++;
+	error_digit(line, i, &len, 0);
+	while (line[*i])
+	{
+		start = *i;
+		while (line[*i] != ',' && line[*i] != '\n' && line[*i])
+			error_digit(line, i, &len, 1);
+		str = ft_strdup_plus(line, len, start, i);
+		(put_on_the_right_place_f(map, str, idx), idx++);
+		len = 0;
+		if (line[*i] == ',')
+			v++;
+		(*i)++;
+	}
+	check_v(v);
+}
+
+void	put_colors_c(t_map *map, char *line, int *i)
+{
+	char	*str;
+	int		v;
+	int		idx;
+	int		len;
+	int		start;
+
+	v = 0;
+	idx = 1;
+	len = 0;
+	while (line[*i] == ' ')
+		(*i)++;
+	error_digit(line, i, &len, 0);
+	while (line[*i])
+	{
+		start = *i;
+		while (line[*i] != ',' && line[*i] != '\n' && line[*i])
+			error_digit(line, i, &len, 1);
+		str = ft_strdup_plus(line, len, start, i);
+		(put_on_the_right_place_c(map, str, idx), idx++);
+		len = 0;
+		if (line[*i] == ',')
+			v++;
+		(*i)++;
+	}
+	check_v(v);
+}
+
+void	check_colors(char *line, t_map *map, int *i)
+{
+	if (line[*i] == 'F')
+		(*i += 1, put_colors_f(map, line, i));
+	if (line[*i] == 'C')
+		(*i += 1, put_colors_c(map, line, i));
 }
 
 void	creat_struct_map(t_map *map, char **av)
@@ -87,6 +225,8 @@ void	creat_struct_map(t_map *map, char **av)
 			i++;
 		if (line[i] == 'N' || line[i] == 'S' || line[i] == 'W' || line[i] == 'E')
 			check_path(map, line, &i);
+		else if (line[i] == 'F' || line[i] == 'C')
+			check_colors(line, map, &i);
 		free(line);
 		line = get_next_line(fd);
 		i = 0;
@@ -102,8 +242,8 @@ void	init_map(t_map *map)
 	map->so = NULL;
 	map->we = NULL;
 	map->ea = NULL;
-	map->f = 0;
-	map->c = 0;
+	map->f.r = -1;
+	map->c.r = -1;
 }
 
 int main(int ac, char **av)
@@ -117,11 +257,63 @@ int main(int ac, char **av)
 			return (write(2,"Error Malloc !", 16));
 		init_map(map_intial);
 		creat_struct_map(map_intial, av);
+		if (!map_intial->no || !map_intial->so \
+			|| !map_intial->we || !map_intial->ea)
+			(write(2, "Error : No Path Here :/\n", 25), exit(1));
+		// if (map_intial->f.r == -1 || map_intial->c.r == -1)
+		// 	(write(2, "Error : of color path:/\n", 25), exit(1));
 		puts(map_intial->no);
 		puts(map_intial->so);
 		puts(map_intial->we);
 		puts(map_intial->ea);
+		printf("r = %d\n", map_intial->f.r);
+		printf("g = %d\n", map_intial->f.g);
+		printf("b = %d\n", map_intial->f.b);
+		printf("r_c = %d\n", map_intial->c.r);
+		printf("g_c = %d\n", map_intial->c.g);
+		printf("b_c = %d\n", map_intial->c.b);
 		printf("OK :)\n");
 	}
+	else
+		(write(2, "Error : more that arguments :/", 31), exit(1));
 	return (0);
 }
+
+
+// void	put_colors_f(t_map *map, char *line, int *i)
+// {
+// 	char	*str;
+// 	int		v;
+// 	int		idx;
+// 	int		len;
+// 	int		start;
+
+// 	v = 0;
+// 	idx = 1;
+// 	len = 0;
+// 	while (line[*i] == ' ')
+// 		(*i)++;
+// 	if (!ft_isdigit(line[*i]))
+// 		return (write(2, "Error6 : of color path:/", 24), exit(1));
+// 	while (line[*i])
+// 	{
+// 		start = *i;
+// 		while (line[*i] != ',' && line[*i] != '\n')
+// 		{
+// 			if (!ft_isdigit(line[*i]))
+// 				return (write(2, "Error 8: of color path:/", 24), exit(1));
+// 			len++;
+// 			(*i)++;
+// 		}
+// 		str = ft_strdup_plus(line, len, start, i);
+// 		(put_on_the_right_place_f(map, str, idx), idx++);
+// 		if (line[*i] == ',')
+// 		{
+// 			len = 0;
+// 			v++;
+// 		}
+// 		(*i)++;
+// 	}
+// 	if (v != 2)
+// 		return (write(2, "Error9 : of color path:/", 24), exit(1));
+// }
