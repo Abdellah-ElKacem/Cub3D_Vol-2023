@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:05:18 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/16 15:09:06 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/17 19:45:38 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,13 @@ typedef struct  s_rgba
 	int	r;
 	int	g;
 	int	b;
-	int	a;
 }               t_rgba;
 
 typedef struct  s_map
 {
 	char    **map;
-	int     map_x;
-	int     map_y;
+	int     map_height;
+	int     map_weight;
 	char    *no;
 	char    *so;
 	char    *we;
@@ -46,6 +45,7 @@ typedef struct  s_map
 
 char	*ft_strdup_gnl(const char *s1);
 int		ft_isdigit(int c);
+int		ft_isprint(int c);
 int		ft_atoi(const char *str);
 
 /* ~~~~~~~~~~~~function parsing~~~~~~~~~~~~ */
