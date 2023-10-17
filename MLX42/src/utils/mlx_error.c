@@ -3,36 +3,57 @@
 /*                                                        ::::::::            */
 /*   mlx_error.c                                        :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: W2Wizard <main@w2wizard.dev>                 +#+                     */
+/*   By: W2Wizard <w2.wizzard@gmail.com>              +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/28 02:51:54 by W2Wizard      #+#    #+#                 */
-/*   Updated: 2022/11/22 08:50:15 by jvan-hal      ########   odam.nl         */
+/*   Updated: 2022/02/25 15:47:54 by lde-la-h      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42_Int.h"
 
-//= Private =//
-
 // English description of the error codes.
-static const char* mlx_errors[MLX_ERRMAX] = {
+static const char		*g_mlx_errors[] = {
 	"No Errors",
 	"File has invalid extension",
 	"Failed to open the file",
 	"PNG file is invalid or corrupted",
 	"XPM42 file is invalid or corrupted",
-	"The specified X or Y positions are out of bounds",
-	"The specified Width or Height dimensions are out of bounds",
-	"The provided image is invalid, might indicate mismanagement of images",
-	"Failed to compile the vertex shader.",
-	"Failed to compile the fragment shader.",
-	"Failed to compile the shaders.",
+	"Font atlas data is invalid",
+	"Texture area out of range",
+	"Parameter passed was NULL",
+	"Failed to compile shader",
 	"Failed to allocate memory",
 	"Failed to initialize GLAD",
 	"Failed to initialize GLFW",
 	"Failed to create window",
-	"String is too big to be drawn",
+	"Image size is too big",
+	"Texture is larger than image",
 };
+
+/**
+ * This is what a 25 line limit does to people...
+ * Utility function that lets you free x amount of pointers.
+ * 
+ * @param count The amount of args provided.
+ * @param ... Any form of pointer.
+ * @return False, this is simply for convinience when necessary.
+ */
+bool	mlx_freen(int32_t count, ...)
+{
+	int32_t	i;
+	va_list	args;
+
+	i = 0;
+	va_start(args, count);
+	while (i < count)
+	{
+		free(va_arg(args, void *));
+		i++;
+	}
+	va_end(args);
+	return (false);
+}
 
 /**
  * Functions to set the error number, simply for convenience.
@@ -40,21 +61,13 @@ static const char* mlx_errors[MLX_ERRMAX] = {
  * @param val The error value.
  * @return Always false 
  */
-bool mlx_error(mlx_errno_t val)
+bool	mlx_error(t_mlx_errno val)
 {
-	mlx_errno = val;
-#ifndef NDEBUG
-	fprintf(stderr, "MLX42: %s", mlx_strerror(mlx_errno));
-#endif
+	g_mlx_errno = val;
 	return (false);
 }
 
-//= Public =//
-
-const char* mlx_strerror(mlx_errno_t val)
+const char	*mlx_strerror(t_mlx_errno val)
 {
-	MLX_ASSERT(val >= 0, "Index must be positive");
-	MLX_ASSERT(val < MLX_ERRMAX, "Index out of bounds");
-
-	return (mlx_errors[val]);
+	return (g_mlx_errors[val]);
 }

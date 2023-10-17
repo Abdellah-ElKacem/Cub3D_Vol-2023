@@ -3,48 +3,50 @@
 /*                                                        ::::::::            */
 /*   mlx_exit.c                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: W2Wizard <main@w2wizard.dev>                 +#+                     */
+/*   By: W2Wizard <w2.wizzard@gmail.com>              +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/28 02:43:22 by W2Wizard      #+#    #+#                 */
-/*   Updated: 2023/06/08 18:12:20 by XEDGit        ########   odam.nl         */
+/*   Updated: 2022/03/01 17:59:21 by lde-la-h      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42_Int.h"
 
-//= Private =//
-
-static void mlx_free_image(void* content)
+static void	mlx_free_imagedata(void	*content)
 {
-	mlx_image_t* img = content;
+	t_mlx_image		*img;
 
-	mlx_freen(4, img->context, img->pixels, img->instances, img);
+	img = content;
+	mlx_freen(3, img->context, img->pixels, img->instances);
 }
 
-//= Public =//
-
-void mlx_close_window(mlx_t* mlx)
+void	mlx_close_window(t_mlx *mlx)
 {
-	MLX_NONNULL(mlx);
+	if (!mlx)
+	{
+		mlx_error(MLX_NULLARG);
+		return ;
+	}
 	glfwSetWindowShouldClose(mlx->window, true);
 }
 
 /**
  * All of glfw & glads resources are cleaned up by the terminate function.
- * Now it's time to clean up our own mess.
+ * Now its time to cleanup our own mess.
  */
-void mlx_terminate(mlx_t* mlx)
+void	mlx_terminate(t_mlx *mlx)
 {
-	MLX_NONNULL(mlx);
+	t_mlx_ctx	*mlxctx;
 
-	mlx_ctx_t *const mlxctx = mlx->context;
-
-	glUseProgram(0);
-	glLinkProgram(mlxctx->shaderprogram);
-	glDeleteProgram(mlxctx->shaderprogram);
+	if (!mlx)
+	{
+		mlx_error(MLX_NULLARG);
+		return ;
+	}
 	glfwTerminate();
-	mlx_lstclear((mlx_list_t**)(&mlxctx->hooks), &free);
-	mlx_lstclear((mlx_list_t**)(&mlxctx->render_queue), &free);
-	mlx_lstclear((mlx_list_t**)(&mlxctx->images), &mlx_free_image);
+	mlxctx = mlx->context;
+	mlx_lstclear((t_mlx_list **)(&mlxctx->hooks), &free);
+	mlx_lstclear((t_mlx_list **)(&mlxctx->render_queue), &free);
+	mlx_lstclear((t_mlx_list **)(&mlxctx->images), &mlx_free_imagedata);
 	mlx_freen(2, mlxctx, mlx);
 }

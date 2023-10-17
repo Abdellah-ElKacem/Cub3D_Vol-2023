@@ -3,201 +3,96 @@
 /*                                                        ::::::::            */
 /*   mlx_init.c                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: W2Wizard <main@w2wizard.dev>                 +#+                     */
+/*   By: W2Wizard <w2.wizzard@gmail.com>              +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/28 00:24:30 by W2Wizard      #+#    #+#                 */
-/*   Updated: 2023/06/08 18:16:19 by XEDGit        ########   odam.nl         */
+/*   Updated: 2022/02/28 20:52:09 by lde-la-h      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42_Int.h"
 
-//= Private =//
-
-static void framebuffer_callback(GLFWwindow *window, int width, int height)
+static void	framebuffer_callback(GLFWwindow *window, int width, int height)
 {
 	(void)window;
 	glViewport(0, 0, width, height);
 }
 
-static bool mlx_create_buffers(mlx_t* mlx)
+static bool	mlx_create_buffers(t_mlx *mlx)
 {
-	mlx_ctx_t* mlxctx = mlx->context;
+	t_mlx_ctx		*context;
 
-	mlxctx->zdepth = 0;
+	context = mlx->context;
+	context->zdepth = 0;
 	glActiveTexture(GL_TEXTURE0);
-	glGenVertexArrays(1, &(mlxctx->vao));
-	glGenBuffers(1, &(mlxctx->vbo));
-	glBindVertexArray(mlxctx->vao);
-	glBindBuffer(GL_ARRAY_BUFFER, mlxctx->vbo);
-
-	// Vertex XYZ coordinates
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_t), NULL);
+	glGenVertexArrays(1, &(context->vao));
+	glGenVertexArrays(1, &(context->vao));
+	glGenBuffers(1, &(context->vbo));
+	glBindVertexArray(context->vao);
+	glBindBuffer(GL_ARRAY_BUFFER, context->vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(t_vert), NULL);
 	glEnableVertexAttribArray(0);
-
-	// UV Coordinates
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_t), (void *)(sizeof(float) * 3));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(t_vert), \
+	(void *)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
-
-	// Texture index
-	glVertexAttribIPointer(2, 1, GL_BYTE, sizeof(vertex_t), (void *)(sizeof(float) * 5));
-	glEnableVertexAttribArray(2);
-
-	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture0"), 0);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture1"), 1);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture2"), 2);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture3"), 3);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture4"), 4);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture5"), 5);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture6"), 6);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture7"), 7);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture8"), 8);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture9"), 9);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture10"), 10);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture11"), 11);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture12"), 12);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture13"), 13);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture14"), 14);
-	glUniform1i(glGetUniformLocation(mlxctx->shaderprogram, "Texture15"), 15);
-
+	glUniform1i(glGetUniformLocation(context->shaderprogram, "OutTexture"), 0);
+	glfwSetWindowSizeCallback(mlx->window, &mlx_on_resize);
+	mlx_on_resize(mlx->window, mlx->width, mlx->height);
 	return (true);
 }
 
-/**
- * Compiles the given shader source code of a given shader type.
- * Returns shader object via param.
- * 
- * @param code The shader source code.
- * @param Type GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER, ...
- * @return Non-zero on success, else 0.
- */
-static uint32_t mlx_compile_shader(const char* code, int32_t type)
+static bool	mlx_init_render(t_mlx *mlx)
 {
-	GLuint shader;
-	int32_t success;
-	char infolog[512] = {0};
+	uint32_t	s[3];
 
-	if (!code || (shader = glCreateShader(type)) == 0) 
-		return (0);
-
-	GLint len = strlen(code);
-	glShaderSource(shader, 1, &code, &len);
-	glCompileShader(shader);
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(shader, sizeof(infolog), NULL, infolog);
-		fprintf(stderr, "%s", infolog);
-		glDeleteShader(shader);
-		return (0);
-	}
-	return (shader);
-}
-
-static bool mlx_init_render(mlx_t* mlx)
-{
-	uint32_t vshader = 0;
-	uint32_t fshader = 0;
-	char infolog[512] = {0};
-	mlx_ctx_t* mlxctx = mlx->context;
-
+	if (!mlx->window)
+		return (mlx_error(MLX_WINFAIL));
 	glfwMakeContextCurrent(mlx->window);
 	glfwSetFramebufferSizeCallback(mlx->window, framebuffer_callback);
 	glfwSetWindowUserPointer(mlx->window, mlx);
 	glfwSwapInterval(MLX_SWAP_INTERVAL);
-
-	// Load all OpenGL function pointers
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		return (mlx_error(MLX_GLADFAIL));
-
-	if (!(vshader = mlx_compile_shader(vert_shader, GL_VERTEX_SHADER)))
-		return (mlx_error(MLX_VERTFAIL));
-	if (!(fshader = mlx_compile_shader(frag_shader, GL_FRAGMENT_SHADER)))
-		return (mlx_error(MLX_FRAGFAIL));
-	if (!(mlxctx->shaderprogram = glCreateProgram()))
 	{
-		glDeleteShader(fshader);
-		glDeleteShader(vshader);
-		return (mlx_error(MLX_SHDRFAIL));
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+			return (mlx_error(MLX_GLADFAIL));
+		if (!mlx_compile_shader(g_vert_shader, GL_VERTEX_SHADER, &s[0]) || \
+			!mlx_compile_shader(g_frag_shader, GL_FRAGMENT_SHADER, &s[1]))
+			return (false);
 	}
-	glAttachShader(mlxctx->shaderprogram, vshader);
-	glAttachShader(mlxctx->shaderprogram, fshader);
-	glLinkProgram(mlxctx->shaderprogram);
-
-	glDeleteShader(vshader);
-	glDeleteShader(fshader);
-	glDetachShader(mlxctx->shaderprogram, vshader);
-	glDetachShader(mlxctx->shaderprogram, fshader);
-
-	int32_t success;
-	glGetProgramiv(mlxctx->shaderprogram, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(mlxctx->shaderprogram, sizeof(infolog), NULL, infolog);
-		fprintf(stderr, "%s", infolog);
-		return (mlx_error(MLX_SHDRFAIL));
-	}
-	glUseProgram(mlxctx->shaderprogram);
-
-	for (size_t i = 0; i < 16; i++)
-		mlxctx->bound_textures[i] = 0;
-
-	return (true);
+	s[2] = 0;
+	if (!mlx_init_shaders(mlx, s))
+		return (false);
+	glDeleteShader(s[0]);
+	glDeleteShader(s[1]);
+	glUseProgram(((t_mlx_ctx *)mlx->context)->shaderprogram);
+	return (mlx_create_buffers(mlx));
 }
 
-//= Public =//
-
-// NOTE: https://www.glfw.org/docs/3.3/group__window.html
-
-// Default settings
-int32_t mlx_settings[MLX_SETTINGS_MAX] = {false, false, false, true, false};
-mlx_errno_t mlx_errno = MLX_SUCCESS;
-bool sort_queue = false;
-
-mlx_t* mlx_init(int32_t width, int32_t height, const char* title, bool resize)
+t_mlx	*mlx_init(int32_t Width, int32_t Height, const char *Title, bool Resize)
 {
-	MLX_NONNULL(title);
-	MLX_ASSERT(width > 0, "Window width must be positive");
-	MLX_ASSERT(height > 0, "Window height must be positive");
+	t_mlx		*mlx;
+	const bool	init = glfwInit();
 
-	bool init;
-	mlx_t* mlx;
-	if (!(init = glfwInit()))
-		return ((void*)mlx_error(MLX_GLFWFAIL));
-	if (!(mlx = calloc(1, sizeof(mlx_t))))
-		return ((void*)mlx_error(MLX_MEMFAIL));
-	if (!(mlx->context = calloc(1, sizeof(mlx_ctx_t))))
-		return (free(mlx), (void*)mlx_error(MLX_MEMFAIL));
-
-	mlx_ctx_t* const mlxctx = mlx->context;
-	mlx->width = width;
-	mlx->height = height;
-	mlxctx->initialWidth = width;
-	mlxctx->initialHeight = height;
-
+	g_mlx_errno = 0;
+	mlx = calloc(1, sizeof(t_mlx));
+	if (!mlx || !init)
+		return (free(mlx), (void *)mlx_error(MLX_GLFWFAIL));
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_MAXIMIZED, mlx_settings[MLX_MAXIMIZED]);
-	glfwWindowHint(GLFW_DECORATED, mlx_settings[MLX_DECORATED]);
-	glfwWindowHint(GLFW_VISIBLE, !mlx_settings[MLX_HEADLESS]);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-	glfwWindowHint(GLFW_RESIZABLE, resize);
-	if (!(mlx->window = glfwCreateWindow(width, height, title, mlx_settings[MLX_FULLSCREEN] ? glfwGetPrimaryMonitor() : NULL, NULL)))
-		return (mlx_terminate(mlx), (void*)mlx_error(MLX_WINFAIL));
-	if (!mlx_init_render(mlx) || !mlx_create_buffers(mlx))
-		return (mlx_terminate(mlx), NULL);
+	if (IS_APPLE)
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, Resize);
+	mlx->width = Width;
+	mlx->height = Height;
+	mlx->window = glfwCreateWindow(Width, Height, Title, NULL, NULL);
+	mlx->context = calloc(1, sizeof(t_mlx_ctx));
+	if (!mlx->context || !mlx_init_render(mlx))
+	{
+		mlx_terminate(mlx);
+		return (NULL);
+	}
 	return (mlx);
-}
-
-void mlx_set_setting(mlx_settings_t setting, int32_t value)
-{
-	MLX_ASSERT(setting >= 0 && setting < MLX_SETTINGS_MAX, "Invalid settings value");
-	mlx_settings[setting] = value;
 }

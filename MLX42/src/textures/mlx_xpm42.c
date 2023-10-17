@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   mlx_xpm42.c                                        :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: W2Wizard <main@w2wizard.dev>                 +#+                     */
+/*   By: W2Wizard <w2.wizzard@gmail.com>              +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/28 03:42:29 by W2Wizard      #+#    #+#                 */
-/*   Updated: 2022/06/27 19:58:33 by lde-la-h      ########   odam.nl         */
+/*   Updated: 2022/02/25 14:08:00 by lde-la-h      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 /**
  * XPM is an obscure image format which can't seem to make up its mind
- * whether it wants to be written in C code or not.
+ * wether it wants to be written in C code or not.
  * 
  * https://en.wikipedia.org/wiki/X_PixMap
  * 
@@ -30,92 +30,46 @@
  * as to what does what.
  * 
  * Additionally with the C style format, the idea is that you simply include
- * it directly into the compilation of the program (since it's just C).
+ * it directly into the compilation of the program (since its just c).
  * 
  * As convenient as this is, I just find it hideous especially the XPM3 variant.
  * By sticking to the XPM style format, conversion should be very easy and 
- * straightforward to this format however.
+ * straight forward to this format however.
  */
-
-//= Private =//
-
-/**
- * Parses HEX color channel e.g: "0F"
- * 
- * @param channel The 2 character string to parse.
- * @return Int value of the channel.
- */
-static uint8_t mlx_parse_hex_channel(char* channel) 
-{
-	char temp_chan[] = {channel[0], channel[1], '\0'};
-	return (strtol(temp_chan, NULL, 16));
-}
-
-/**
- * Parses the XPM color value entry e.g: ".X #00FF00FF"
- * into the color table while also verifying the format.
- * 
- * @param xpm The XPM.
- * @param line The line to parse.
- * @param ctable The color hash table.
- * @param s Size of the hash table
- * @return True or false depending on if it successfully parsed the line.
- */
-static bool mlx_insert_xpm_entry(xpm_t* xpm, char* line, uint32_t* ctable, size_t s)
-{
-	// NOTE: uintptr because windows likes to complain...
-	// Verify the length of the Pixel string by checking backwards for the first
-	// occurrence of a space and then check the distance by comparing with cpp.
-	if (((uintptr_t)strrchr(line, ' ') - (uintptr_t)line) != (uint64_t)xpm->cpp)
-		return (false);
-	if (!isspace(line[xpm->cpp]) || line[xpm->cpp + 1] != '#' || !isalnum(line[xpm->cpp + 2]))
-		return (false);
-
-	uint32_t color = 0;
-	size_t start_offset = xpm->cpp + 2;
-	color |= mlx_parse_hex_channel(line + start_offset) << 24;
-	color |= mlx_parse_hex_channel(line + start_offset + 2) << 16;
-	color |= mlx_parse_hex_channel(line + start_offset + 4) << 8;
-	color |= mlx_parse_hex_channel(line + start_offset + 6);
-	
-	int32_t index = mlx_fnv_hash(line, xpm->cpp) % s;
-	ctable[index] = xpm->mode == 'm' ? mlx_rgba_to_mono(color) : color;
-	return (true);
-}
 
 /**
  * Retrieves the pixel data line by line and then processes each pixel
  * by hashing the characters and looking it up from the color table.
  * 
- * @param xpm The XPM.
- * @param file The filepath to the XPM42 file.
- * @param ctable The color hash table.
- * @param s Size of the hash table.
- * @return True or false depending on if it successfully parsed the line.
+ * Dirty norme hack to make this norme with the X array... norme is great right?
  */
-static bool mlx_read_data(xpm_t* xpm, FILE* file, uint32_t* ctable, size_t s)
+static bool	mlx_read_data(t_xpm *xpm, FILE *file, uint32_t *ctable, size_t s)
 {
-	size_t line_len;
-	char* line = NULL;
+	int64_t	x[2];
+	int64_t	y;
+	int64_t	bread;
+	size_t	buffsize;
+	char	*line;
 
-	for (int64_t y_xpm = 0; y_xpm < xpm->texture.height; y_xpm++)
+	y = -1;
+	line = NULL;
+	while (++y < xpm->texture.height)
 	{
-		if (!mlx_getline(&line, &line_len, file))
-			return (free(line), false);
-		if (line[line_len - 1] == '\n')
-			line_len--;
-		if (line_len != xpm->texture.width * xpm->cpp)
-			return (free(line), false);
-
-		// NOTE: Copy pixel by pixel as we need to retrieve the hash table.
-		for (int64_t x_xpm = 0, x_line = 0; x_xpm < xpm->texture.width; x_xpm++, x_line += xpm->cpp)
+		x[0] = -1;
+		x[1] = 0;
+		bread = getline(&line, &buffsize, file);
+		if (line[bread - 1] == '\n')
+			bread--;
+		if (bread == -1 || bread != xpm->texture.width * xpm->cpp)
+			return (mlx_freen(1, line));
+		while (++x[0] < xpm->texture.width)
 		{
-			uint8_t* pixelstart = &xpm->texture.pixels[(y_xpm * xpm->texture.width + x_xpm) * BPP];
-			mlx_draw_pixel(pixelstart, ctable[mlx_fnv_hash(&line[x_line], xpm->cpp) % s]);
+			mlx_xpm_putpixel(xpm, x[0], y, \
+			mlx_grab_xpm_pixel(&line[x[1]], ctable, xpm, s));
+			x[1] += xpm->cpp;
 		}
 	}
-	free(line);
-	return (true);
+	return (!mlx_freen(1, line));
 }
 
 /**
@@ -123,27 +77,33 @@ static bool mlx_read_data(xpm_t* xpm, FILE* file, uint32_t* ctable, size_t s)
  * table with every ascii character in it. This should help avoid a O(n)
  * case and give us a O(1) for very fast look ups.
  * 
- * Downside is we still need to iterate over each pixel to solve its color.
- * So I hope this makes it at least a bit faster.
+ * Downside is we still need to iterate of each pixel to solve its color.
+ * So I hope this makes it atleast a bit faster.
  * 
  * TODO: This buffer might be way to big! Do actual collision checks, 
  * for now just straight up raw dog this.
  */
-static bool mlx_read_table(xpm_t* xpm, FILE* file)
+static bool	mlx_read_table(t_xpm *xpm, FILE *file)
 {
-	char* line = NULL;
-	size_t line_len;
-	uint32_t ctable[UINT16_MAX] = {0};
+	char		*line;
+	int32_t		i;
+	int64_t		bread;
+	size_t		buffsize;
+	uint32_t	ctable[UINT16_MAX];
 
-	for (int32_t i = 0; i < xpm->color_count; i++)
+	i = -1;
+	line = NULL;
+	memset(ctable, 0, sizeof(ctable));
+	while (++i < xpm->color_count)
 	{
-		if (!mlx_getline(&line, &line_len, file))
-			return (free(line), false);
-		if (!mlx_insert_xpm_entry(xpm, line, ctable, (sizeof(ctable) / BPP)))
-			return (free(line), false);
+		bread = getline(&line, &buffsize, file);
+		if (bread < 1)
+			return (mlx_freen(1, line));
+		if (!mlx_insert_xpm_entry(xpm, line, ctable, (sizeof(ctable) / 4)))
+			return (mlx_freen(1, line));
 	}
 	free(line);
-	return (mlx_read_data(xpm, file, ctable, (sizeof(ctable) / BPP)));
+	return (mlx_read_data(xpm, file, ctable, (sizeof(ctable) / 4)));
 }
 
 /**
@@ -153,43 +113,47 @@ static bool mlx_read_table(xpm_t* xpm, FILE* file)
  * count and finally the color mode. Which is either c for Color or
  * m for Monochrome.
  */
-static bool mlx_read_xpm_header(xpm_t* xpm, FILE *file)
+static bool	mlx_read_xpm_header(t_xpm *xpm, FILE *file)
 {
 	int32_t	flagc;
-	char	buffer[64] = {0};
+	char	buffer[64];
 
-	// Check file type dec...
+	memset(buffer, '\0', sizeof(buffer));
 	if (!fgets(buffer, sizeof(buffer), file))
 		return (false);
 	if (strncmp(buffer, "!XPM42\n", sizeof(buffer)) != 0)
 		return (false);
-
-	// Get header info ...
 	if (!fgets(buffer, sizeof(buffer), file))
 		return (false);
-	flagc = sscanf(buffer, "%i %i %i %i %c\n", &xpm->texture.width, &xpm->texture.height, &xpm->color_count, &xpm->cpp, &xpm->mode);
-	if (flagc < 4 || xpm->texture.width > INT16_MAX || xpm->texture.height > INT16_MAX || \
-		!(xpm->mode == 'c' || xpm->mode == 'm') || xpm->cpp > 10)
+	flagc = sscanf(buffer, "%i %i %i %i %c\n", &xpm->texture.width, \
+	&xpm->texture.height, &xpm->color_count, &xpm->cpp, &xpm->mode);
+	if (flagc < 4 || xpm->texture.width > INT16_MAX || \
+	xpm->texture.height > INT16_MAX)
 		return (false);
-	xpm->texture.bytes_per_pixel = BPP;
-	xpm->texture.pixels = calloc(xpm->texture.width * xpm->texture.height, sizeof(int32_t));
-	return (xpm->texture.pixels != NULL ? mlx_read_table(xpm, file) : false);
+	if (!(xpm->mode == 'c' || xpm->mode == 'm') || xpm->cpp > 10)
+		return (false);
+	xpm->texture.pixels = calloc(xpm->texture.width * \
+		xpm->texture.height, sizeof(int32_t));
+	if (!xpm->texture.pixels)
+		return (false);
+	xpm->texture.bytes_per_pixel = sizeof(int32_t);
+	return (mlx_read_table(xpm, file));
 }
 
-//= Public =//
-
-xpm_t* mlx_load_xpm42(const char* path)
+t_xpm	*mlx_load_xpm42(const char *path)
 {
-	FILE* file;
-	xpm_t* xpm = NULL;
+	t_xpm	*xpm;
+	FILE	*file;
 
-	MLX_NONNULL(path);
+	xpm = NULL;
 	if (!strstr(path, ".xpm42"))
-		return ((void*)mlx_error(MLX_INVEXT));
-	if (!(file = fopen(path, "r")))
-		return ((void*)mlx_error(MLX_INVFILE));
-	if (!(xpm = calloc(1, sizeof(xpm_t))))
-		return ((void*)mlx_error(MLX_MEMFAIL));
+		return ((void *)mlx_error(MLX_INVEXT));
+	file = fopen(path, "r");
+	if (!file)
+		return ((void *)mlx_error(MLX_INVFILE));
+	xpm = calloc(1, sizeof(t_xpm));
+	if (!xpm)
+		return ((void *)mlx_error(MLX_MEMFAIL));
 	if (!mlx_read_xpm_header(xpm, file))
 	{
 		mlx_freen(2, xpm->texture.pixels, xpm);
@@ -198,11 +162,4 @@ xpm_t* mlx_load_xpm42(const char* path)
 	}
 	fclose(file);
 	return (xpm);
-}
-
-void mlx_delete_xpm42(xpm_t* xpm)
-{
-	MLX_NONNULL(xpm);
-	free(xpm->texture.pixels);
-	free(xpm);
 }

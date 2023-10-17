@@ -13,7 +13,7 @@ CFLAGS = -Wall -Wextra -Ofast
 all: ${NAME}
 
 ${NAME}: ${OBJ}
-		 ${CC} ${CFLAGS} ${OBJ} MLX42/build/libmlx42.a -lglfw -L"/Users/zel-kach/homebrew/opt/glfw/lib" -o $@
+		 ${CC} ${CFLAGS} ${OBJ} MLX42/libmlx42.a/libmlx42.a -lglfw -L"/Users/zel-kach/homebrew/opt/glfw/lib" -o $@
 
 %.o: %.c cub3D.h
 		 ${CC} ${CFLAGS} -c $<

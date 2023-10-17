@@ -9,7 +9,7 @@ char	map[11][15] = {
 			{1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-			{1, 0, 0, 0, 0, 1, 0, 0, 'N', 0, 0, 1, 0, 0, 1},
+			{1, 0, 0, 0, 0, 1, 0, 0, 'S', 0, 0, 1, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 };
@@ -28,7 +28,8 @@ void	draw_line(t_player *player, double x, double y, double x1, double y1)
 	y_increment = (y1 - y) / (double)steps;
 	while (steps--)
 	{
-		mlx_put_pixel(player->img.img, x * player->mes.mini_map_scale, y * player->mes.mini_map_scale, YELLOWCOLOR);
+		mlx_put_pixel(player->img.img, x * player->mes.mini_map_scale,
+			y * player->mes.mini_map_scale, YELLOWCOLOR);
 		x += x_increment;
 		y += y_increment;
 	}
@@ -287,12 +288,12 @@ void	draw_player(t_player *player)
 		return ;
 	player->x += cos(player->rotation_angle) * move_step;
 	player->y += sin(player->rotation_angle) * move_step;
-	if (player->side_direction == 1)
+	if (player->side_direction == -1)//left
 	{
-		player->x += cos(player->rotation_angle - M_PI / 2) * player->moveSpeed;
-		player->y += sin(player->rotation_angle - M_PI / 2) * player->moveSpeed;
+		player->x += cos(player->rotation_angle - M_PI / 2) * player->moveSpeed;//horizontal
+		player->y += sin(player->rotation_angle - M_PI / 2) * player->moveSpeed;//vertical
 	}
-	else if (player->side_direction == -1)
+	else if (player->side_direction == 1)// adding a full circle to cos() keeps it the same (cos (n + ))
 	{
 		player->x += cos(player->rotation_angle + M_PI / 2) * player->moveSpeed;
 		player->y += sin(player->rotation_angle + M_PI / 2) * player->moveSpeed;
@@ -404,7 +405,7 @@ void	key_s(t_player *player, mlx_key_data_t keydata)
 void	key_a(t_player *player, mlx_key_data_t keydata)
 {
 	if (keydata.action == MLX_PRESS)
-		player->side_direction = 1;
+		player->side_direction = -1;
 	else if (keydata.action == MLX_RELEASE)
 		player->side_direction = 0;
 }
@@ -412,7 +413,7 @@ void	key_a(t_player *player, mlx_key_data_t keydata)
 void	key_d(t_player *player, mlx_key_data_t keydata)
 {
 	if (keydata.action == MLX_PRESS)
-		player->side_direction = -1;
+		player->side_direction = 1;
 	else if (keydata.action == MLX_RELEASE)
 		player->side_direction = 0;
 }
@@ -479,13 +480,13 @@ int	**fill_color_array(mlx_texture_t *side)
 //south side is broken ?
 void	init_textures(t_player *player)
 {
-	mlx_texture_t *no_side = mlx_load_png("./png_files/redbrick.png");
+	mlx_texture_t *no_side = mlx_load_png("./png_files/castle.png");
 	player->textures.no_side = fill_color_array(no_side);
-	mlx_texture_t *ea_side = mlx_load_png("./png_files/brownbrick.png");
+	mlx_texture_t *ea_side = mlx_load_png("./png_files/castle1.png");
 	player->textures.ea_side = fill_color_array(ea_side);
-	mlx_texture_t *so_side = mlx_load_png("./png_files/coal.png");
+	mlx_texture_t *so_side = mlx_load_png("./png_files/castle2.png");
 	player->textures.so_side = fill_color_array(so_side);
-	mlx_texture_t *we_side = mlx_load_png("./png_files/planks.png");
+	mlx_texture_t *we_side = mlx_load_png("./png_files/castle3.png");
 	player->textures.we_side = fill_color_array(we_side);
 }
 
