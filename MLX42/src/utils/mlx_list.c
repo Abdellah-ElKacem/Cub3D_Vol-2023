@@ -3,79 +3,174 @@
 /*                                                        ::::::::            */
 /*   mlx_list.c                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: W2Wizard <w2.wizzard@gmail.com>              +#+                     */
+/*   By: W2Wizard <main@w2wizard.dev>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/28 01:53:51 by W2Wizard      #+#    #+#                 */
-/*   Updated: 2022/01/31 15:12:24 by lde-la-h      ########   odam.nl         */
+/*   Updated: 2023/02/27 11:31:01 by W2Wizard      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42_Int.h"
 
-int32_t	mlx_lstsize(t_mlx_list *lst)
+//= Private =//
+
+int32_t mlx_lstsize(mlx_list_t* lst)
 {
 	int32_t	i;
 
-	i = 0;
-	if (!lst)
-		return (i);
-	while (lst)
-	{
+	for (i = 0; lst != NULL; i++)
 		lst = lst->next;
-		i++;
-	}
 	return (i);
 }
 
-void	mlx_lstclear(t_mlx_list **lst, void (*del)(void*))
+static void mlx_lstdelone(mlx_list_t* lst, void (*del)(void *))
 {
-	if (!*lst)
-		return ;
-	if ((*lst)->next)
-		mlx_lstclear(&(*lst)->next, del);
-	del((*lst)->content);
-	free(*lst);
-	(*lst) = NULL;
+	if (del != NULL)
+		del(lst->content);
+	free(lst);
 }
 
-t_mlx_list	*mlx_lstnew(void *content)
+void mlx_lstclear(mlx_list_t** lst, void (*del)(void*))
 {
-	t_mlx_list	*out;
+	mlx_list_t* next_lst;
 
-	out = malloc(sizeof(t_mlx_list));
-	if (out)
+	while (*lst != NULL)
+	{
+		next_lst = (*lst)->next;
+		mlx_lstdelone(*lst, del);
+		*lst = next_lst;
+	}
+}
+
+mlx_list_t* mlx_lstnew(void* content)
+{
+	mlx_list_t* out = NULL;
+
+	if ((out = malloc(sizeof(mlx_list_t))))
 	{
 		out->content = content;
 		out->next = NULL;
 		out->prev = NULL;
-		return (out);
 	}
-	return (NULL);
+	return (out);
 }
 
-t_mlx_list	*mlx_lstlast(t_mlx_list *lst)
+mlx_list_t* mlx_lstlast(mlx_list_t* lst)
 {
-	while (lst)
-	{
-		if (!lst->next)
-			break ;
+	if (!lst)
+		return (NULL);
+	while (lst->next)
 		lst = lst->next;
-	}
 	return (lst);
 }
 
-void	mlx_lstadd_back(t_mlx_list **lst, t_mlx_list *new)
+void mlx_lstadd_back(mlx_list_t** lst, mlx_list_t* new)
 {
-	t_mlx_list	*temp;
-
 	if (!lst || !new)
-		return ;
+		return;
 	if (!*lst)
 		*lst = new;
 	else
 	{
-		temp = mlx_lstlast(*lst);
+		mlx_list_t* temp = mlx_lstlast(*lst);
 		new->prev = temp;
 		temp->next = new;
 	}
+}
+
+void mlx_lstadd_front(mlx_list_t** lst, mlx_list_t* new)
+{
+	if (!lst || !new)
+		return;
+	if ((*lst) != NULL)
+		(*lst)->prev = new;
+	new->next = *lst;
+	new->prev = NULL;
+	*lst = new;
+}
+
+/**
+ * Removes the specified content from the list, if found.
+ * Also fixes any relinking that might be needed.
+ *
+ * @param[in] lst The list
+ * @param[in] comp Function to check if the content and value are the same.
+ * @returns The removed element, clean up as you wish.
+ */
+mlx_list_t* mlx_lstremove(mlx_list_t** lst, void* value, bool (*comp)(void*, void*))
+{
+	mlx_list_t* lstcpy = *lst;
+
+	while (lstcpy && !comp(lstcpy->content, value))
+		lstcpy = lstcpy->next;
+	if (lstcpy == NULL)
+		return (NULL);
+	if (lstcpy == *lst)
+		*lst = lstcpy->next;
+	if (lstcpy->next != NULL)
+		lstcpy->next->prev = lstcpy->prev;
+	if (lstcpy->prev != NULL)
+		lstcpy->prev->next = lstcpy->next;
+	return (lstcpy);
+}
+
+// Retrieve Z value from queue.
+static int32_t mlx_getzdata(mlx_list_t* entry)
+{
+	const draw_queue_t* queue = entry->content;
+
+	return (queue->image->instances[queue->instanceid].z);
+}
+
+// Insert the entry back into head sorted.
+static void mlx_insertsort(mlx_list_t** head, mlx_list_t* new)
+{
+	mlx_list_t* current;
+
+	if (*head == NULL)
+		*head = new;
+	else if (mlx_getzdata(*head) >= mlx_getzdata(new))
+	{
+		new->next = *head;
+		new->next->prev = new;
+		*head = new;
+	}
+	else
+	{
+		current = *head;
+
+		// Find insertion location.
+		while (current->next != NULL && mlx_getzdata(current->next) < mlx_getzdata(new))
+			current = current->next;
+		new->next = current->next;
+
+		// Insert at the end
+		if (current->next != NULL)
+			new->next->prev = new;
+		current->next = new;
+		new->prev = current;
+	}
+}
+
+/**
+ * Okay-ish sorting algorithm to sort the render queue / doubly linked list.
+ * We need to do this to fix transparency.
+ *
+ * @param lst The render queue.
+ */
+void mlx_sort_renderqueue(mlx_list_t** lst)
+{
+	mlx_list_t* sorted = NULL;
+	mlx_list_t* lstcpy = *lst;
+
+	while (lstcpy != NULL)
+	{
+		mlx_list_t* next = lstcpy->next;
+
+		// Separate entry out of list and insert it back but sorted.
+		lstcpy->prev = lstcpy->next = NULL;
+		mlx_insertsort(&sorted, lstcpy);
+		lstcpy = next;
+	}
+	*lst = sorted;
 }

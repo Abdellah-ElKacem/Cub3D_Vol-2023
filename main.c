@@ -1,4 +1,4 @@
-#include "cub3D.h"
+#include "cub3d.h"
 
 char	map[11][15] = {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -276,28 +276,36 @@ void draw_mini_map(t_player *player)
 	}
 }
 
-void	draw_player(t_player *player)
+int	player_movement(t_player *player)
 {
-	int	x;
-	int	y;
 	int	move_step;
-//check for collision on the sides*********************
+
 	player->rotation_angle += player->turn_direction * player->rotationSpeed;
 	move_step = player->moveSpeed * player->walk_direction;
 	if (has_wall(player, player->x + cos(player->rotation_angle) * move_step, player->y + sin(player->rotation_angle) * move_step))
-		return ;
+		return (0);
 	player->x += cos(player->rotation_angle) * move_step;
 	player->y += sin(player->rotation_angle) * move_step;
-	if (player->side_direction == -1)//left
+	if (player->side_direction == -1)
 	{
-		player->x += cos(player->rotation_angle - M_PI / 2) * player->moveSpeed;//horizontal
-		player->y += sin(player->rotation_angle - M_PI / 2) * player->moveSpeed;//vertical
+		player->x += cos(player->rotation_angle - M_PI / 2) * player->moveSpeed;
+		player->y += sin(player->rotation_angle - M_PI / 2) * player->moveSpeed;
 	}
 	else if (player->side_direction == 1)// adding a full circle to cos() keeps it the same (cos (n + ))
 	{
 		player->x += cos(player->rotation_angle + M_PI / 2) * player->moveSpeed;
 		player->y += sin(player->rotation_angle + M_PI / 2) * player->moveSpeed;
 	}
+	return (1);
+}
+
+void	draw_player(t_player *player)
+{
+	int	x;
+	int	y;
+
+	if (!player_movement(player))
+		return ;
 	cast_all_rays(player);
 	render_projected_walls(player);
 	draw_mini_map(player);
@@ -306,13 +314,8 @@ void	draw_player(t_player *player)
 	{
 		x = -10;
 		while (++x < 10)
-		{
-			int draw_x = player->x + x;
-			int draw_y = player->y + y;
-			draw_x *= player->mes.mini_map_scale;
-			draw_y *= player->mes.mini_map_scale;
-			mlx_put_pixel(player->img.img, draw_x, draw_y, GREENCOLOR);
-		}
+			mlx_put_pixel(player->img.img, (player->x + x) * player->mes.mini_map_scale,
+				(player->y + y) * player->mes.mini_map_scale, GREENCOLOR);
 	}
 }
 
@@ -387,6 +390,7 @@ void	key_left(t_player *player, mlx_key_data_t keydata)
 	else if (keydata.action == MLX_RELEASE)
 		player->turn_direction = 0;
 }
+
 void	key_w(t_player *player, mlx_key_data_t keydata)
 {
 	if (keydata.action == MLX_PRESS)
@@ -394,6 +398,7 @@ void	key_w(t_player *player, mlx_key_data_t keydata)
 	else if (keydata.action == MLX_RELEASE)
 		player->walk_direction = 0;
 }
+
 void	key_s(t_player *player, mlx_key_data_t keydata)
 {
 	if (keydata.action == MLX_PRESS)
@@ -455,8 +460,9 @@ int	**fill_color_array(mlx_texture_t *side)
 	int	x;
 	int	combined;
 	int **pixel_holder;
-	int pixel = 0;
+	int pixel;
 
+	pixel = 0;
 	combined = 0;
 	pixel_holder = (int **)malloc(64 * sizeof(int *));
 	y = -1;
@@ -480,14 +486,23 @@ int	**fill_color_array(mlx_texture_t *side)
 //south side is broken ?
 void	init_textures(t_player *player)
 {
-	mlx_texture_t *no_side = mlx_load_png("./png_files/castle.png");
+	mlx_texture_t	*no_side;
+	mlx_texture_t	*we_side;
+	mlx_texture_t	*ea_side;
+	mlx_texture_t	*so_side;
+
+	no_side = mlx_load_png("./png_files/castle.png");
 	player->textures.no_side = fill_color_array(no_side);
-	mlx_texture_t *ea_side = mlx_load_png("./png_files/castle1.png");
+	ea_side = mlx_load_png("./png_files/castle1.png");
 	player->textures.ea_side = fill_color_array(ea_side);
-	mlx_texture_t *so_side = mlx_load_png("./png_files/castle2.png");
+	so_side = mlx_load_png("./png_files/castle2.png");
 	player->textures.so_side = fill_color_array(so_side);
-	mlx_texture_t *we_side = mlx_load_png("./png_files/castle3.png");
+	we_side = mlx_load_png("./png_files/castle3.png");
 	player->textures.we_side = fill_color_array(we_side);
+	mlx_delete_texture(no_side);
+	mlx_delete_texture(ea_side);
+	mlx_delete_texture(so_side);
+	mlx_delete_texture(we_side);
 }
 
 int	main()

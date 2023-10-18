@@ -3,100 +3,115 @@
 /*                                                        ::::::::            */
 /*   mlx_loop.c                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: W2Wizard <w2.wizzard@gmail.com>              +#+                     */
+/*   By: W2Wizard <main@w2wizard.dev>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/28 01:24:36 by W2Wizard      #+#    #+#                 */
-/*   Updated: 2022/03/01 17:55:30 by lde-la-h      ########   odam.nl         */
+/*   Updated: 2023/03/28 16:34:17 by W2Wizard      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42_Int.h"
 
-static void	mlx_exec_loop_hooks(t_mlx *mlx)
-{
-	t_mlx_list		*lstcpy;
-	t_mlx_hook		*hook;
-	const t_mlx_ctx	*mlxctx = mlx->context;
+//= Private =//
 
-	lstcpy = mlxctx->hooks;
+static void mlx_exec_loop_hooks(mlx_t* mlx)
+{
+	const mlx_ctx_t* mlxctx = mlx->context;
+
+	mlx_list_t* lstcpy = mlxctx->hooks;
 	while (lstcpy && !glfwWindowShouldClose(mlx->window))
 	{
-		hook = ((t_mlx_hook *)lstcpy->content);
+		mlx_hook_t* hook = ((mlx_hook_t*)lstcpy->content);
 		hook->func(hook->param);
 		lstcpy = lstcpy->next;
 	}
 }
 
-bool	mlx_loop_hook(t_mlx *mlx, void (*f)(void *), void *param)
+static void mlx_render_images(mlx_t* mlx)
 {
-	t_mlx_list		*lst;
-	t_mlx_hook		*hook;
-	const t_mlx_ctx	*mlxctx = mlx->context;
+	mlx_ctx_t* mlxctx = mlx->context;
+	mlx_list_t* imglst = mlxctx->images;
 
-	if (!mlx || !f)
-		return (mlx_error(MLX_NULLARG));
-	hook = malloc(sizeof(t_mlx_hook));
-	if (!hook)
-		return (false);
-	hook->func = f;
-	hook->param = param;
-	lst = mlx_lstnew(hook);
-	if (!lst)
+	if (sort_queue)
 	{
-		free(hook);
-		return (mlx_error(MLX_MEMFAIL));
+		sort_queue = false;
+		mlx_sort_renderqueue(&mlxctx->render_queue);
 	}
-	mlx_lstadd_back((t_mlx_list **)(&mlxctx->hooks), lst);
-	return (true);
-}
 
-// 1. Iterate over images to upload the texture to the GPU
-// to update pixel data.
-// 2. Bind the texture and execute draw call.
-static void	mlx_render_images(t_mlx *mlx)
-{
-	t_mlx_image			*image;
-	t_draw_queue		*drawcall;
-	const t_mlx_ctx		*mlxctx = mlx->context;
-	const t_mlx_list	*imglst = mlxctx->images;
-	const t_mlx_list	*render_queue = mlxctx->render_queue;
-
+	// Upload image textures to GPU
 	while (imglst)
 	{
-		image = imglst->content;
-		glBindTexture(GL_TEXTURE_2D, \
-		((t_mlx_image_ctx *)image->context)->texture);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image->width, image->height, \
-		GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+		mlx_image_t* image;
+		if (!(image = imglst->content)) {
+			mlx_error(MLX_INVIMG);
+			return;
+		}
+
+		glBindTexture(GL_TEXTURE_2D, ((mlx_image_ctx_t*)image->context)->texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
 		imglst = imglst->next;
 	}
+
+	// Execute draw calls
+	mlx_list_t* render_queue = mlxctx->render_queue;
 	while (render_queue)
 	{
-		drawcall = render_queue->content;
-		if (drawcall && drawcall->image->enabled)
-			mlx_draw_instance(drawcall->image, \
-			&drawcall->image->instances[drawcall->instanceid]);
+		draw_queue_t* drawcall = render_queue->content;
+		mlx_instance_t* instance =  &drawcall->image->instances[drawcall->instanceid];
+
+		if (drawcall && drawcall->image->enabled && instance->enabled)
+			mlx_draw_instance(mlx->context, drawcall->image, instance);
 		render_queue = render_queue->next;
 	}
 }
 
-// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-void	mlx_loop(t_mlx *mlx)
-{
-	double		start;
-	double		oldstart;
+//= Public =//
 
-	oldstart = 0;
+bool mlx_loop_hook(mlx_t* mlx, void (*f)(void*), void* param)
+{
+	MLX_NONNULL(mlx);
+	MLX_NONNULL(f);
+
+	mlx_hook_t* hook;
+	if (!(hook = malloc(sizeof(mlx_hook_t))))
+		return (mlx_error(MLX_MEMFAIL));
+
+	mlx_list_t* lst;
+	if (!(lst = mlx_lstnew(hook)))
+	{
+		free(hook);
+		return (mlx_error(MLX_MEMFAIL));
+	}
+	hook->func = f;
+	hook->param = param;
+	const mlx_ctx_t	*mlxctx = mlx->context;
+	mlx_lstadd_back((mlx_list_t**)(&mlxctx->hooks), lst);
+	return (true);
+}
+
+// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+void mlx_loop(mlx_t* mlx)
+{
+	MLX_NONNULL(mlx);
+
+	double start, oldstart = 0;
 	while (!glfwWindowShouldClose(mlx->window))
 	{
 		start = glfwGetTime();
 		mlx->delta_time = start - oldstart;
 		oldstart = start;
+	
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glfwGetWindowSize(mlx->window, &(mlx->width), &(mlx->height));
+
+		if ((mlx->width > 1 || mlx->height > 1))
+			mlx_update_matrix(mlx);
+
 		mlx_exec_loop_hooks(mlx);
 		mlx_render_images(mlx);
+		mlx_flush_batch(mlx->context);
+
 		glfwSwapBuffers(mlx->window);
 		glfwPollEvents();
 	}
