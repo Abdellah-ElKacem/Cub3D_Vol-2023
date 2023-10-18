@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 16:17:27 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/16 15:30:00 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/18 17:58:07 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ char	*ft_strdup_gnl(const char *s1)
 	if (!str)
 		return (NULL);
 	i = 0;
-	if (s1[i] == '\n')
-		return (str[i] = '\0', str);
+	if (s1[0] == '\0' || s1[0] == '\n')
+		return (str[0] = '\0', str);
 	while (s1[i] != '\0')
 	{
 		str[i] = s1[i];

@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:05:18 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/17 19:45:38 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/18 10:53:36 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct  s_map
 /* ~~~~~~~~~~~~function lib_tool~~~~~~~~~~~~ */
 
 char	*ft_strdup_gnl(const char *s1);
+int		ft_strlen_f(char *s);
 int		ft_isdigit(int c);
 int		ft_isprint(int c);
 int		ft_atoi(const char *str);
@@ -51,6 +52,22 @@ int		ft_atoi(const char *str);
 /* ~~~~~~~~~~~~function parsing~~~~~~~~~~~~ */
 
 char	*ft_strdup_plus(const char *s1, int len, int start, int *end);
+void	creat_map1(t_map *map, char *line, int fd, int len);
+void	check_path_and_color(t_map *map);
+void	creat_map(t_map *map, char *line, int fd, char **av);
+void	creat_struct_map(t_map *map, char **av);
+void	north_path(t_map *map, char *str, int *i);
+void	south_path(t_map *map, char *str, int *i);
+void	west_path(t_map *map, char *str, int *i);
+void	east_path(t_map *map, char *str, int *i);
+void	check_path(t_map *map, char *line, int *i);
+void	put_colors_c(t_map *map, char *line, int *i);
+void	check_colors(char *line, t_map *map, int *i);
+void	put_on_the_right_place_f(t_map *map, char *str, int idx);
+void	put_on_the_right_place_c(t_map *map, char *str, int idx);
+void	error_digit(char *line, int *i, int *len, int idx);
+void	check_v(int v);
+void	put_colors_f(t_map *map, char *line, int *i);
 
 
 #endif
