@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:03:12 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/18 23:44:45 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/19 21:55:18 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,20 @@ void	check_wall_start_and_end(t_map *map)
 			w++;
 		}
 	}
-	// w = 0;
-	
-	// while (map->map[map->map_height - 1])
-	// {
-	// 	if (map->map[map->map_height - 1][w] != '1')
-	// 		(write(2, "Error1 : a wall not found:/\n", 28), exit(1));
-	// 	w++;
-	// }
-	// if (!check_space(map->map[map->map_height]))
-	// 	(write(2, "Error : a wall not found:/\n", 28), exit(1));
+	w = 0;
+	// if (map->map[map->map_height - 1][0] == '\0')
+	// 	(write(2, "Error4 : a wall not found:/\n", 28), exit(1));
+	printf("___{%s}_\n",map->map[map->map_height - 2]);
+	while (map->map[map->map_height - 1][w] != '\0')
+	{
+		while (map->map[map->map_height - 1][w] == ' ')
+			w++;
+		if (map->map[map->map_height - 1][w] != '1' || !check_space(map->map[map->map_height - 1]))
+			(write(2, "Error2 : a wall not found:/\n", 28), exit(1));
+		w++;
+	}
+	// if (!map->map[map->map_height])
+	// 	(write(2, "Error3 : a wall not found:/\n", 28), exit(1));
 }
 
 void	check_wall_on_the_map(t_map *map)
@@ -107,12 +111,15 @@ int	main(int ac, char **av)
 		check_path_and_color(map);
 		if (!map->map)
 			(write(2, "Error : map not found:/\n", 25), exit(1));
-		// check_wall_start_and_end(map);
+		check_wall_start_and_end(map);
 		// check_wall_on_the_map(map);
 		int jj = 0;
-		while (map->map[jj++])
+		while (jj <= map->map_height)
+		{
 			printf("[%s]\n", map->map[jj]);
-			puts(map->map[jj]);
+			jj++;
+		}
+			// printf("[%s]\n", map->map[0]);
 		printf("OK :)\n");
 	}
 	else

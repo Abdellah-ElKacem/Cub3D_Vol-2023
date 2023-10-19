@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:45:14 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/18 23:53:32 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/19 21:47:10 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,33 @@
 
 void	creat_map1(t_map *map, char *line, int fd, int len)
 {
-	// printf("%d\n", len);
-	map->map = (char **)malloc(sizeof(char *) * len + 1);
+	int check;
+	int h;
+
+	h = 0;
+	map->map = (char **)malloc(sizeof(char *) * (len));
 	if (!map->map)
 		return ;
-	map->map_weight = ft_strlen_f(line) - 1;
+	map->map_weight = ft_strlen(line) - 1;
 	while (line)
 	{
-	// printf("%d\n", map->map_height);
+		if (h == len - 1)
+		{
+			check = ft_strlen_f(line);
+			if (line[check - 1] == '\n')
+			{
+				free(line);
+				(write(2, "Error : map not found:/\n", 25), exit(1));
+			}
+		}
 		map->map[map->map_height] = ft_strdup_gnl(line);
 		map->map_height++;
 		(free(line), line = get_next_line(fd));
-		// if (map->map_weight < (ft_strlen_f(line) - 1))
-		// 	map->map_weight = ft_strlen_f(line) - 1;
+		h++;
 	}
-	// printf("%d\n", map->map_height);
-		map->map[map->map_height] = NULL;
+	map->map[map->map_height] = NULL;
 }
+
 
 void	check_path_and_color(t_map *map)
 {
