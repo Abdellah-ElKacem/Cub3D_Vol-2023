@@ -3,40 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   cub_main.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elkacem <elkacem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:03:12 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/19 21:55:18 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/20 00:28:55 by elkacem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int	check_space(char *str)
-{
-	int	i;
-	int	space;
-
-	i = 0;
-	space = 0;
-	while (str[i])
-	{
-		if (str[i] == ' ')
-			space++;
-		i++;
-	}
-	if (ft_strlen_f(str) == space)
-		return(0);
-	else
-		return(1);
-}
-
 void	check_wall_start_and_end(t_map *map)
 {
-	int h;
 	int w;
 	
-	h = 0;
 	w = 0;
 	while (map->map[0][w])
 	{
@@ -52,9 +31,6 @@ void	check_wall_start_and_end(t_map *map)
 		}
 	}
 	w = 0;
-	// if (map->map[map->map_height - 1][0] == '\0')
-	// 	(write(2, "Error4 : a wall not found:/\n", 28), exit(1));
-	printf("___{%s}_\n",map->map[map->map_height - 2]);
 	while (map->map[map->map_height - 1][w] != '\0')
 	{
 		while (map->map[map->map_height - 1][w] == ' ')
@@ -63,8 +39,6 @@ void	check_wall_start_and_end(t_map *map)
 			(write(2, "Error2 : a wall not found:/\n", 28), exit(1));
 		w++;
 	}
-	// if (!map->map[map->map_height])
-	// 	(write(2, "Error3 : a wall not found:/\n", 28), exit(1));
 }
 
 void	check_wall_on_the_map(t_map *map)
@@ -78,11 +52,36 @@ void	check_wall_on_the_map(t_map *map)
 	{
 		while (map->map[h][w] == ' ')
 			w++;
-		if (map->map[h][w] != '1' || map->map[h][ft_strlen_f(map->map[h]) - 1] != '1')
+		if (map->map[h][w] != '1' && map->map[h][ft_strlen_f(map->map[h]) - 1] != '1')
 			(write(2, "Error2 : a wall not found:/\n", 28), exit(1));
 		h++;
 		w = 0;
 	}
+}
+
+void	check_player(t_map *map)
+{
+	int	h;
+	int	w;
+	int	p;
+
+	h = 0;
+	w = 0;
+	p = 0;
+	while (h < map->map_height)
+	{
+		while(map->map[h][w])
+		{
+			if (map->map[h][w] == 'N' || map->map[h][w] == 'W' \
+				|| map->map[h][w] == 'E' || map->map[h][w] == 'S')
+				p++;
+			w++;
+		}
+		w = 0;
+		h++;
+	}
+	if (p != 1)
+			(write(2, "Error : no player found:/\n", 27), exit(1));
 }
 
 void	init_map(t_map *map)
@@ -111,8 +110,9 @@ int	main(int ac, char **av)
 		check_path_and_color(map);
 		if (!map->map)
 			(write(2, "Error : map not found:/\n", 25), exit(1));
-		check_wall_start_and_end(map);
-		// check_wall_on_the_map(map);
+		// check_wall_start_and_end(map);
+		check_wall_on_the_map(map);
+		check_player(map);
 		int jj = 0;
 		while (jj <= map->map_height)
 		{

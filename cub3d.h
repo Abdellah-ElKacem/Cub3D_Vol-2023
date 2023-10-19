@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elkacem <elkacem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:05:18 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/18 10:53:36 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/19 23:57:09 by elkacem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,6 @@ void	put_on_the_right_place_c(t_map *map, char *str, int idx);
 void	error_digit(char *line, int *i, int *len, int idx);
 void	check_v(int v);
 void	put_colors_f(t_map *map, char *line, int *i);
-
+int		check_space(char *str);
 
 #endif

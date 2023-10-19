@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   creat_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elkacem <elkacem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:45:14 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/19 21:47:10 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/19 23:56:40 by elkacem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	creat_map1(t_map *map, char *line, int fd, int len)
 		if (h == len - 1)
 		{
 			check = ft_strlen_f(line);
-			if (line[check - 1] == '\n')
+			if (line[check - 1] == '\n' || !check_space(line))
 			{
 				free(line);
 				(write(2, "Error : map not found:/\n", 25), exit(1));
