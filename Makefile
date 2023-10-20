@@ -1,6 +1,12 @@
 NAME = cub3D
 
-SRC = main.c
+SRC = main.c \
+	  parcing/parcing.c \
+	  get_next_line/get_next_line_utils.c \
+	  get_next_line/get_next_line.c \
+	  tools/ft_atoi.c \
+	  tools/ft_isdigit.c \
+	  get_next_line/ft_strdup_gnl.c
 
 OBJ = ${SRC:.c=.o}
 
@@ -12,15 +18,15 @@ CC = cc
 
 RM = rm -f
 
-CFLAGS = -Wall -Wextra -Ofast
+CFLAGS = -Wall -Wextra -Werror -Ofast
 
 all: mlxm ${NAME}
 
 ${NAME}: ${OBJ}
 		${CC} ${CFLAGS} ${OBJ} ${mlxa} -lglfw -L"/Users/zel-kach/homebrew/opt/glfw/lib" -o $@
 
-%.o: %.c ${HEADER} ${libfta}
-		${CC} ${CFLAGS} -c $<
+%.o: %.c ${HEADER}
+		${CC} ${CFLAGS} -c $< -o $@
 
 mlxm:
 		make -C MLX42/build

@@ -1,38 +1,37 @@
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# include "math.h"
+# include <math.h>
 # include <stdio.h>
 # include <stdbool.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
 # include "MLX42/include/MLX42/MLX42.h"
 
-//fix: needs to be constant value
-# define REDCOLOR 255 << 24 | 0 << 16 | 0 << 8 | 0xFF
-# define BROWNCOLOR 165 << 24 | 42 << 16 | 42 << 8 | 0xFF
-# define BLACKCOLOR 0 << 24 | 0 << 16 | 0 << 8 | 0xFF
-# define GREENCOLOR 0 << 24 | 128 << 16 | 128 << 8 | 0xFF
-# define LIGHTGREY 211 << 24 | 211 << 16 | 211 << 8 | 0xFF
-# define GREYCOLOR 128 << 24 | 128 << 16 | 128 << 8 | 0xFF
-# define YELLOWCOLOR 255 << 24 | 255 << 16 | 0 << 8 | 0xFF
-# define BLUECOLOR 0 << 24 | 0 << 16 | 255 << 8 | 0xFF
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 10
+# endif
 
-# define NO_SIDE REDCOLOR
-# define SO_SIDE YELLOWCOLOR
-# define EA_SIDE BLUECOLOR
-# define WE_SIDE GREENCOLOR
-
-# define CEILING_COLOR LIGHTGREY
-# define FLOOR_COLOR GREYCOLOR
+typedef struct s_colors {
+	int		ceiling_color;
+	int		floor_color;
+	int		red;
+	int		green;
+	int		grey;
+	int		black;
+	int		yellow;
+}				t_colors;
 
 typedef struct s_data {
+	int		bits_per_pixel;
+	int		endian;
+	int		line_length;
 	char	*addr;
 	void	*img;
 	void	*mlx;
 	void	*mlx_win;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
 }				t_data;
 
 typedef struct s_textures {
@@ -45,14 +44,34 @@ typedef struct s_textures {
 typedef struct s_rays {
 	int		x;
 	int		y;
-	double	ray_angle;
-	double	ray_distance;
 	bool	hitvertical;
 	bool	down_ray;
 	bool	up_ray;
 	bool	right_ray;
 	bool	left_ray;
+	double	ray_angle;
+	double	ray_distance;
 }				t_rays;
+
+typedef struct s_rgba
+{
+	int	r;
+	int	g;
+	int	b;
+}				t_rgba;
+
+typedef struct s_map
+{
+	int		map_height;
+	int		map_width;
+	char	**map;
+	char	*no;
+	char	*so;
+	char	*we;
+	char	*ea;
+	t_rgba	f;
+	t_rgba	c;
+}				t_map;
 
 typedef struct s_mesurments {
 	int		tile_size;
@@ -69,27 +88,34 @@ typedef struct s_mesurments {
 	double	wall_distance;
 }				t_mesurments;
 
-typedef struct s_map {
-	char	**map_grid;
-	int		map_width;
-	int		map_height;
-}				t_map;
-
 typedef struct s_player {
+	t_colors		color;
 	t_textures		textures;
 	t_map			map;
 	t_mesurments	mes;
 	t_data			img;
 	t_rays			*ray;
-	double			x;
-	double			y;
-	double			radius;
 	int				turn_direction;
 	int				walk_direction;
 	int				side_direction;
+	double			x;
+	double			y;
+	double			radius;
 	double			rotation_angle;
-	double			moveSpeed;
-	double			rotationSpeed;
+	double			move_speed;
+	double			rotation_speed;
 }				t_player;
+
+size_t	ft_strlen(char *s);
+char	*ft_strdup_plus(const char *s1, int len, int start, int *end);
+char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strdup_gnl(const char *s1);
+char	*ft_strdup(char *s1);
+char	*get_next_line(int fd);
+void	parcing(t_player *player, char **av);
+int		ft_isdigit(int c);
+int		ft_isprint(int c);
+int		ft_atoi(const char *str);
+int		ft_strchr(const char *s, char c);
 
 #endif

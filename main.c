@@ -1,18 +1,18 @@
 #include "cub3d.h"
 
-char	map[11][15] = {
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1},
-			{1, 0, 0, 1, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 1},
-			{1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1},
-			{1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-			{1, 0, 0, 0, 0, 1, 0, 0, 'S', 0, 0, 1, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-};
+// char	map[11][15] = {
+// 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+// 			{1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1},
+// 			{1, 0, 0, 1, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 1},
+// 			{1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1},
+// 			{1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
+// 			{1, 0, 0, 0, 0, 1, 0, 0, 'S', 0, 0, 1, 0, 0, 1},
+// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+// 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+// };
 
 void	draw_line(t_player *player, double x, double y, double x1, double y1)
 {
@@ -29,7 +29,7 @@ void	draw_line(t_player *player, double x, double y, double x1, double y1)
 	while (steps--)
 	{
 		mlx_put_pixel(player->img.img, x * player->mes.mini_map_scale,
-			y * player->mes.mini_map_scale, YELLOWCOLOR);
+			y * player->mes.mini_map_scale, player->color.yellow);
 		x += x_increment;
 		y += y_increment;
 	}
@@ -41,13 +41,13 @@ int	texture_mapping(t_player *player, int **texture, int y, int y1, double wall_
 	int	pixel_y;
 
 	if (player->ray[i].hitvertical)
-		pixel_x = fmod(player->ray[i].y, 64);
+		pixel_x = fmod(player->ray[i].y, player->mes.tile_size);
 	else
-		pixel_x = fmod(player->ray[i].x, 64);
+		pixel_x = fmod(player->ray[i].x, player->mes.tile_size);
 	pixel_y = y - y1;
-	pixel_y *=  (64 / wall_strip_height);
-	if (pixel_y >= 64)
-		pixel_y = 63;
+	pixel_y *=  (player->mes.tile_size / wall_strip_height);
+	if (pixel_y >= player->mes.tile_size)
+		pixel_y = player->mes.tile_size - 1;
 	return (texture[pixel_y][pixel_x]);
 }
 
@@ -61,11 +61,11 @@ void draw_rectangles(t_player *player, int x, double wall_strip_height, int i, i
 	while (++y < player->mes.win_height)
 	{
 		if (y < y1)
-			mlx_put_pixel(player->img.img, x, y, CEILING_COLOR);
+			mlx_put_pixel(player->img.img, x, y, player->color.ceiling_color);
 		else if (y < y1 + wall_strip_height)
 			mlx_put_pixel(player->img.img, x, y, texture_mapping(player, texture, y, y1, wall_strip_height, i));
 		else
-			mlx_put_pixel(player->img.img, x, y, FLOOR_COLOR);
+			mlx_put_pixel(player->img.img, x, y, player->color.floor_color);
 	}
 }
 
@@ -94,9 +94,9 @@ int has_wall(t_player *player, double x, double y)
 		return (1);
 	i = floor(y / player->mes.tile_size);
 	j = floor(x / player->mes.tile_size);
-	if (i >= 11 || j >= 15)
+	if (i >= player->map.map_height || j >= player->map.map_width)
 		return (1);
-	return (map[i][j] == 1); //replaye with player->map.map_grid
+	return (player->map.map[i][j] == '1'); //replaye with player->map.map_grid
 }
 
 void	cast(t_player *player, int i)
@@ -219,8 +219,8 @@ void draw_mini_square(t_player *player, int x, int y, int Color)
 	int	dy;
 	int	dx;
 
-	i = x * 64 * player->mes.mini_map_scale;
-	j = y * 64 * player->mes.mini_map_scale;
+	i = x * player->mes.tile_size * player->mes.mini_map_scale;
+	j = y * player->mes.tile_size * player->mes.mini_map_scale;
 	dy = -1;
 	while (++dy < player->mes.tile_size * player->mes.mini_map_scale)
 	{
@@ -260,18 +260,21 @@ void draw_mini_map(t_player *player)
 {
 	int	x;
 	int	y = -1;
-
-	while (++y < 11)
+	while (++y < player->map.map_height)
 	{
 		x = -1;
-		while (++x < 15)
+		while (++x < player->map.map_width)
 		{
-			if (map[y][x] == 1) //replaye with player->map.map_grid
-				draw_mini_square(player, x, y, REDCOLOR);
-			else if (map[y][x] == 2) //replaye with player->map.map_grid
-				draw_mini_square(player, x, y, BLACKCOLOR);
+			if (player->map.map[y][x] == '1')
+				draw_mini_square(player, x, y, player->color.red);
+			else if (player->map.map[y][x] == '0'
+				|| player->map.map[y][x] == 'W'
+				|| player->map.map[y][x] == 'N'
+				|| player->map.map[y][x] == 'E'
+				|| player->map.map[y][x] == 'S')
+				draw_mini_square(player, x, y, player->color.grey);
 			else
-				draw_mini_square(player, x, y, GREYCOLOR);
+				draw_mini_square(player, x, y, player->color.black);
 		}
 	}
 }
@@ -280,21 +283,21 @@ int	player_movement(t_player *player)
 {
 	int	move_step;
 
-	player->rotation_angle += player->turn_direction * player->rotationSpeed;
-	move_step = player->moveSpeed * player->walk_direction;
+	player->rotation_angle += player->turn_direction * player->rotation_speed;
+	move_step = player->move_speed * player->walk_direction;
 	if (has_wall(player, player->x + cos(player->rotation_angle) * move_step, player->y + sin(player->rotation_angle) * move_step))
 		return (0);
 	player->x += cos(player->rotation_angle) * move_step;
 	player->y += sin(player->rotation_angle) * move_step;
 	if (player->side_direction == -1)
 	{
-		player->x += cos(player->rotation_angle - M_PI / 2) * player->moveSpeed;
-		player->y += sin(player->rotation_angle - M_PI / 2) * player->moveSpeed;
+		player->x += cos(player->rotation_angle - M_PI / 2) * player->move_speed;
+		player->y += sin(player->rotation_angle - M_PI / 2) * player->move_speed;
 	}
 	else if (player->side_direction == 1)// adding a full circle to cos() keeps it the same (cos (n + ))
 	{
-		player->x += cos(player->rotation_angle + M_PI / 2) * player->moveSpeed;
-		player->y += sin(player->rotation_angle + M_PI / 2) * player->moveSpeed;
+		player->x += cos(player->rotation_angle + M_PI / 2) * player->move_speed;
+		player->y += sin(player->rotation_angle + M_PI / 2) * player->move_speed;
 	}
 	return (1);
 }
@@ -315,7 +318,7 @@ void	draw_player(t_player *player)
 		x = -10;
 		while (++x < 10)
 			mlx_put_pixel(player->img.img, (player->x + x) * player->mes.mini_map_scale,
-				(player->y + y) * player->mes.mini_map_scale, GREENCOLOR);
+				(player->y + y) * player->mes.mini_map_scale, player->color.green);
 	}
 }
 
@@ -330,17 +333,17 @@ void	find_neemo(t_player *player)
 		y = -1;
 		while (++y < player->mes.map_num_colms)
 		{
-			if (map[x][y] == 'N' || map[x][y] == 'S' || map[x][y] == 'E' || map[x][y] == 'W')
+			if (player->map.map[x][y] == 'N' || player->map.map[x][y] == 'S' || player->map.map[x][y] == 'E' || player->map.map[x][y] == 'W')
 			{
 				player->x = y * player->mes.tile_size;
 				player->y = x * player->mes.tile_size;
-				if (map[x][y] == 'N')
+				if (player->map.map[x][y] == 'N')
 					player->rotation_angle = M_PI * 1.5;
-				else if (map[x][y] == 'S')
+				else if (player->map.map[x][y] == 'S')
 					player->rotation_angle = M_PI / 2;
-				else if (map[x][y] == 'E')
+				else if (player->map.map[x][y] == 'E')
 					player->rotation_angle = 0;
-				else if (map[x][y] == 'W')
+				else if (player->map.map[x][y] == 'W')
 					player->rotation_angle = M_PI;
 				return ;
 			}
@@ -353,21 +356,18 @@ void	init_player(t_player *player)
 	player->turn_direction = 0;
 	player->walk_direction = 0;
 	player->side_direction = 0;
-	player->moveSpeed = 1.0;
-	player->rotationSpeed = 2 * (M_PI / 180);
+	player->move_speed = 3.0;
+	player->rotation_speed = 2 * (M_PI / 180);
 	find_neemo(player);
 }
 
 void	init_mesurments(t_player *player)
 {
-	// player->map.map_grid = map;
-	// player->map.map_width = tmp_map_width from get_next_line;
-	// player->map.map_height = tmp_map_height from get_next_line;
 	player->mes.tile_size = 64;
-	player->mes.map_num_rows = 11; /*replace with player->map.map_width*/
-	player->mes.map_num_colms = 15; /*replace with player->map.map_height*/
-	player->mes.win_width = player->mes.map_num_colms * player->mes.tile_size;
-	player->mes.win_height = player->mes.map_num_rows * player->mes.tile_size;
+	player->mes.map_num_rows = player->map.map_height;
+	player->mes.map_num_colms = player->map.map_width;
+	player->mes.win_width = 1472;
+	player->mes.win_height = 1024;
 	player->mes.fov_angle = 60 * (M_PI / 180);
 	player->mes.wall_strip_width = 1;
 	player->mes.num_rays = player->mes.win_width / player->mes.wall_strip_width;
@@ -483,7 +483,7 @@ int	**fill_color_array(mlx_texture_t *side)
 	return (pixel_holder);
 }
 
-//south side is broken ?
+//south side is broken ? + check for leaks when path is wrong
 void	init_textures(t_player *player)
 {
 	mlx_texture_t	*no_side;
@@ -491,13 +491,15 @@ void	init_textures(t_player *player)
 	mlx_texture_t	*ea_side;
 	mlx_texture_t	*so_side;
 
-	no_side = mlx_load_png("./png_files/castle.png");
+	no_side = mlx_load_png(player->map.no);
+	ea_side = mlx_load_png(player->map.ea);
+	so_side = mlx_load_png(player->map.so);
+	we_side = mlx_load_png(player->map.we);
+	if (!no_side || !ea_side || !so_side || !we_side)
+		(write(2, "Error:\nProblem loading textures!\n", 34), exit(1));
 	player->textures.no_side = fill_color_array(no_side);
-	ea_side = mlx_load_png("./png_files/castle1.png");
 	player->textures.ea_side = fill_color_array(ea_side);
-	so_side = mlx_load_png("./png_files/castle2.png");
 	player->textures.so_side = fill_color_array(so_side);
-	we_side = mlx_load_png("./png_files/castle3.png");
 	player->textures.we_side = fill_color_array(we_side);
 	mlx_delete_texture(no_side);
 	mlx_delete_texture(ea_side);
@@ -505,10 +507,25 @@ void	init_textures(t_player *player)
 	mlx_delete_texture(we_side);
 }
 
-int	main()
+void	init_color(t_player *player)
 {
-	t_player		player;
+	player->color.ceiling_color = (player->map.c.r << 24) | (player->map.c.g << 16) | (player->map.c.b << 8) | 0xFF;
+	player->color.floor_color = (player->map.f.r << 24) | (player->map.f.g << 16) | (player->map.f.b << 8) | 0xFF;
+	player->color.red = 255 << 24 | 0 << 16 | 0 << 8 | 0xFF;
+	player->color.green = 0 << 24 | 128 << 16 | 128 << 8 | 0xFF;
+	player->color.grey = 128 << 24 | 128 << 16 | 128 << 8 | 0xFF;
+	player->color.yellow = 255 << 24 | 255 << 16 | 0 << 8 | 0xFF;
+	player->color.black = 0 << 24 | 0 << 16 | 0 << 8 | 0xFF;
+}
 
+int	main(int ac, char **av)
+{
+	t_player	player;
+
+	if (ac != 2)
+		(write(2, "Error:\nWrong number of arguments!\n", 35), exit(1));
+	parcing(&player, av);
+	init_color(&player);
 	init_mesurments(&player);
 	init_player(&player);
 	init_textures(&player);
