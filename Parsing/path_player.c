@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:39:43 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/18 10:41:13 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/20 15:40:44 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,22 +58,22 @@ void	east_path(t_map *map, char *str, int *i)
 
 void	check_path(t_map *map, char *line, int *i)
 {
-	if (line[*i] == 'N' && line[*i + 1] == 'O')
+	if (line[*i] == 'N' && line[*i + 1] == 'O' && line[*i + 2] == ' ')
 	{
 		*i += 2;
 		north_path(map, line, i);
 	}
-	else if (line[*i] == 'S' && line[*i + 1] == 'O')
+	else if (line[*i] == 'S' && line[*i + 1] == 'O' && line[*i + 2] == ' ')
 	{
 		*i += 2;
 		south_path(map, line, i);
 	}
-	else if (line[*i] == 'W' && line[*i + 1] == 'E')
+	else if (line[*i] == 'W' && line[*i + 1] == 'E' && line[*i + 2] == ' ')
 	{
 		*i += 2;
 		west_path(map, line, i);
 	}
-	else if (line[*i] == 'E' && line[*i + 1] == 'A')
+	else if (line[*i] == 'E' && line[*i + 1] == 'A' && line[*i + 2] == ' ')
 	{
 		*i += 2;
 		east_path(map, line, i);

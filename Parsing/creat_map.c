@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   creat_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elkacem <elkacem@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:45:14 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/20 13:09:19 by elkacem          ###   ########.fr       */
+/*   Updated: 2023/10/20 20:44:30 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,32 @@
 
 void	creat_map1(t_map *map, char *line, int fd, int len)
 {
-	int check;
-	int h;
+	int	check;
+	int	h;
 
 	h = 1;
-	printf("len is : %d\n", len);
 	map->map = (char **)malloc(sizeof(char *) * (len + 1));
 	if (!map->map)
 		return ;
-	map->map_weight = ft_strlen(line) - 1;
+	map->map_weight = ft_strlen_f(line) - 1;
 	while (line)
 	{
-		printf("[[[[%d]]]]\n", h);
 		if (h == len - 1)
 		{
 			check = ft_strlen_f(line);
-			// if (line[check] == '\n' || !check_space(line))
-			// printf("----]%c]", line[check]);
 			if (line[check - 1] == '\n' || !check_space(line))
-			{
-				free(line);
-				(write(2, "Error : map not found:/\n", 25), exit(1));
-			}
+				(free(line), \
+					write(2, "Error2 : a wall not found:/\n", 28), exit(1));
 		}
 		map->map[map->map_height] = ft_strdup_gnl(line);
 		map->map_height++;
 		(free(line), line = get_next_line(fd));
+		if (map->map_weight < ft_strlen_f(line) - 1)
+			map->map_weight = ft_strlen_f(line) - 1;
 		h++;
 	}
 	map->map[map->map_height] = NULL;
 }
-
 
 void	check_path_and_color(t_map *map)
 {
@@ -64,12 +59,12 @@ void	creat_map(t_map *map, char *line, int fd, char **av)
 	len = 1;
 	while (line)
 	{
-		// printf("len is : I %d I and str is {%s}", len, line);
 		(free(line), line = get_next_line(fd));
 		len++;
 	}
+	if (len == 2)
+		(write(2, "Error : player not found:/\n", 25), exit(1));
 	close(fd);
-	// exit(1);
 	fd = open(av[1], O_RDONLY);
 	line = get_next_line(fd);
 	len1 = 0;
@@ -79,8 +74,7 @@ void	creat_map(t_map *map, char *line, int fd, char **av)
 			len1++;
 		if (ft_isprint(line[len1]))
 			return (creat_map1(map, line, fd, len));
-		free(line);
-		line = get_next_line(fd);
+		(free(line), line = get_next_line(fd));
 		len1 = 0;
 	}
 }

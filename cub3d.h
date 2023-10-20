@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elkacem <elkacem@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:05:18 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/19 23:57:09 by elkacem          ###   ########.fr       */
+/*   Updated: 2023/10/20 21:37:42 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CUB3D_h
-# define CUB3D_h
+#ifndef CUB3D_H
+# define CUB3D_H
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -20,26 +20,25 @@
 # include <fcntl.h>
 # include "g_n_l/get_next_line.h"
 
-typedef struct  s_rgba
+typedef struct s_rgba
 {
 	int	r;
 	int	g;
 	int	b;
-}               t_rgba;
+}				t_rgba;
 
-typedef struct  s_map
+typedef struct s_map
 {
-	char    **map;
-	int     map_height;
-	int     map_weight;
-	char    *no;
-	char    *so;
-	char    *we;
-	char    *ea;
+	char	**map;
+	int		map_height;
+	int		map_weight;
+	char	*no;
+	char	*so;
+	char	*we;
+	char	*ea;
 	t_rgba	f;
 	t_rgba	c;
-	
-}               t_map;
+}				t_map;
 
 /* ~~~~~~~~~~~~function lib_tool~~~~~~~~~~~~ */
 
@@ -48,6 +47,7 @@ int		ft_strlen_f(char *s);
 int		ft_isdigit(int c);
 int		ft_isprint(int c);
 int		ft_atoi(const char *str);
+int		ft_strcmp(char *str1, char *str2);
 
 /* ~~~~~~~~~~~~function parsing~~~~~~~~~~~~ */
 
@@ -69,5 +69,12 @@ void	error_digit(char *line, int *i, int *len, int idx);
 void	check_v(int v);
 void	put_colors_f(t_map *map, char *line, int *i);
 int		check_space(char *str);
+void	check_wall_start_and_end(t_map *map);
+void	check_wall_on_the_map(t_map *map);
+void	check_any_caracter(t_map *map);
+void	check_empty_is_arounded(t_map *map);
+void	check_player(t_map *map);
+int		caractere_map(int c);
+int		caractere_map_1(int c);
 
 #endif
