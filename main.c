@@ -1,19 +1,5 @@
 #include "cub3d.h"
 
-// char	map[11][15] = {
-// 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-// 			{1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1},
-// 			{1, 0, 0, 1, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 1},
-// 			{1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1},
-// 			{1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-// 			{1, 0, 0, 0, 0, 1, 0, 0, 'S', 0, 0, 1, 0, 0, 1},
-// 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-// 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-// };
-
 void	draw_line(t_player *player, double x, double y, double x1, double y1)
 {
 	int		steps;
@@ -90,7 +76,7 @@ int has_wall(t_player *player, double x, double y)
 
 	i = 0;
 	j = 0;
-	if (x < 0 || x > player->mes.win_width || y < 0 || y > player->mes.win_height)
+	if (x < 0 || x > player->mes.map_num_colms * 64 || y < 0 || y > player->mes.map_num_rows * 64)
 		return (1);
 	i = floor(y / player->mes.tile_size);
 	j = floor(x / player->mes.tile_size);
@@ -279,6 +265,7 @@ void draw_mini_map(t_player *player)
 	}
 }
 
+//check for side collision
 int	player_movement(t_player *player)
 {
 	int	move_step;
