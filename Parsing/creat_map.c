@@ -6,7 +6,7 @@
 /*   By: elkacem <elkacem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:45:14 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/19 23:56:40 by elkacem          ###   ########.fr       */
+/*   Updated: 2023/10/20 13:09:19 by elkacem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,20 @@ void	creat_map1(t_map *map, char *line, int fd, int len)
 	int check;
 	int h;
 
-	h = 0;
-	map->map = (char **)malloc(sizeof(char *) * (len));
+	h = 1;
+	printf("len is : %d\n", len);
+	map->map = (char **)malloc(sizeof(char *) * (len + 1));
 	if (!map->map)
 		return ;
 	map->map_weight = ft_strlen(line) - 1;
 	while (line)
 	{
+		printf("[[[[%d]]]]\n", h);
 		if (h == len - 1)
 		{
 			check = ft_strlen_f(line);
+			// if (line[check] == '\n' || !check_space(line))
+			// printf("----]%c]", line[check]);
 			if (line[check - 1] == '\n' || !check_space(line))
 			{
 				free(line);
@@ -57,13 +61,15 @@ void	creat_map(t_map *map, char *line, int fd, char **av)
 	int	len1;
 
 	check_path_and_color(map);
-	len = 0;
+	len = 1;
 	while (line)
 	{
-		len++;
+		// printf("len is : I %d I and str is {%s}", len, line);
 		(free(line), line = get_next_line(fd));
+		len++;
 	}
 	close(fd);
+	// exit(1);
 	fd = open(av[1], O_RDONLY);
 	line = get_next_line(fd);
 	len1 = 0;

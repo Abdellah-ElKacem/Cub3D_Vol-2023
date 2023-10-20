@@ -6,7 +6,7 @@
 /*   By: elkacem <elkacem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:03:12 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/20 00:28:55 by elkacem          ###   ########.fr       */
+/*   Updated: 2023/10/20 13:00:44 by elkacem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,9 @@ int	main(int ac, char **av)
 		check_path_and_color(map);
 		if (!map->map)
 			(write(2, "Error : map not found:/\n", 25), exit(1));
-		// check_wall_start_and_end(map);
-		check_wall_on_the_map(map);
-		check_player(map);
+		check_wall_start_and_end(map);
+		// check_wall_on_the_map(map);
+		// check_player(map);
 		int jj = 0;
 		while (jj <= map->map_height)
 		{
