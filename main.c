@@ -521,5 +521,5 @@ int	main(int ac, char **av)
 	mlx_key_hook(player.img.mlx, key_func, &player);
 	mlx_loop_hook(player.img.mlx, loop, &player);
 	mlx_loop(player.img.mlx);
-	return 0;
+	return (0);
 }

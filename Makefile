@@ -1,12 +1,21 @@
 NAME = cub3D
 
 SRC = main.c \
-	  parcing/parcing.c \
 	  get_next_line/get_next_line_utils.c \
 	  get_next_line/get_next_line.c \
+	  get_next_line/ft_strdup_gnl.c \
 	  tools/ft_atoi.c \
 	  tools/ft_isdigit.c \
-	  get_next_line/ft_strdup_gnl.c
+	  tools/ft_strcmp.c \
+	  tools/ft_strlen_fix.c \
+	  parcing/colors_path_1.c \
+	  parcing/colors_path.c \
+	  parcing/creat_map.c \
+	  parcing/parcing.c \
+	  parcing/pars_map.c \
+	  parcing/pars_utils.c \
+	  parcing/path_player.c \
+
 
 OBJ = ${SRC:.c=.o}
 
