@@ -1,0 +1,42 @@
+ the code 255 << 24 | 0 << 16 | 0 << 8 | 0xFF, each part of the bitwise OR expression corresponds to one of the color components (Red, Green, Blue, and Alpha) in a 32-bit color value. Here's the reasoning behind the bit-shifting for each component:
+
+255 << 24 (Red):
+
+We want to set the red component to 255. In the 32-bit color value, the red component occupies the 8 most significant bits (bits 24 to 31).
+Shifting 255 by 24 positions to the left effectively places the value 255 in the red component's position (bits 24 to 31).
+0 << 16 (Green):
+
+We want the green component to be 0. In the 32-bit color value, the green component occupies the next 8 bits (bits 16 to 23).
+Shifting 0 by 16 positions to the left places 0 in the green component's position (bits 16 to 23), effectively clearing any previous value.
+0 << 8 (Blue):
+
+We want the blue component to be 0. In the 32-bit color value, the blue component occupies the 8 bits following the green component (bits 8 to 15).
+Shifting 0 by 8 positions to the left places 0 in the blue component's position (bits 8 to 15), effectively clearing any previous value.
+0xFF (Alpha):
+
+We want the alpha component to be 255, which represents full opacity. In the 32-bit color value, the alpha component occupies the 8 least significant bits (bits 0 to 7).
+0xFF is already in the correct position for the alpha component, as it occupies the 8 least significant bits.
+So, the bit-shifting and bitwise OR operations are used to construct a 32-bit color value with specific values for each component (RGBA), ensuring that each component is in its proper position within the 32-bit value.
+
+
+
+
+1111111111111111111111111111111111111
+1000000000000000000000000000000000001
+1000001111110000000000000000100000001
+1001001222210000000000000000000000001
+1001001111110000000000001111111111001
+1001000000000000000000001222222221001
+1000000000000000000000001111211111001
+1000000000010000000000000000111000001
+10000100W0010000000000000000111000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1000000000000000000000000000000000001
+1111111111111111111111111111111111111
