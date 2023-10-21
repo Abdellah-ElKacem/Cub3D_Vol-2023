@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:05:18 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/20 21:37:42 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/21 10:51:58 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,9 @@ void	check_wall_on_the_map(t_map *map);
 void	check_any_caracter(t_map *map);
 void	check_empty_is_arounded(t_map *map);
 void	check_player(t_map *map);
+void	check_player_has_a_empty(t_map *map);
 int		caractere_map(int c);
 int		caractere_map_1(int c);
+int		caractere_map_2(int c);
 
 #endif

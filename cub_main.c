@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 15:03:12 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/20 20:16:15 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/21 10:52:29 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	parse_map(t_map *map)
 	check_player(map);
 	check_any_caracter(map);
 	check_empty_is_arounded(map);
+	check_player_has_a_empty(map);
 }
 
 int	main(int ac, char **av)

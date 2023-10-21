@@ -6,7 +6,7 @@
 #    By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/14 15:19:10 by ael-kace          #+#    #+#              #
-#    Updated: 2023/10/20 20:06:11 by ael-kace         ###   ########.fr        #
+#    Updated: 2023/10/21 10:41:19 by ael-kace         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ OBJ = $(SRC:.c=.o)
 
 CC = cc
 
-CFLAG = -Wall -Werror -Wextra -g -fsanitize=address
+CFLAG = -Wall -Werror -Wextra -g #-fsanitize=address
 
 all : $(NAME)
 

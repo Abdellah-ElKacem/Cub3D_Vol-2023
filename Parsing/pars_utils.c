@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 23:58:02 by elkacem           #+#    #+#             */
-/*   Updated: 2023/10/20 21:45:47 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/21 10:50:22 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,13 @@ int	caractere_map_1(int c)
 {
 	if (c == '1' || c == '0' \
 		|| c == 'N' || c == 'S' || c == 'W' || c == 'E')
+		return (1);
+	return (0);
+}
+
+int	caractere_map_2(int c)
+{
+	if (c == '1' || c == '0')
 		return (1);
 	return (0);
 }

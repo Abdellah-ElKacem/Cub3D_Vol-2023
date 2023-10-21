@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 19:42:07 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/20 21:44:55 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/21 11:05:35 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,10 @@ void	check_wall_start_and_end(t_map *map)
 	{
 		while (map->map[0][w] == ' ')
 			w++;
-		while (map->map[0][w])
-		{
-			if (map->map[0][w] != '1' || map->map[1][0] == '\0' \
-				|| !check_space(map->map[1]))
-				(write(2, "Error1 : a wall not found:/\n", 28), exit(1));
+		if (map->map[0][w] != '1' || map->map[1][0] == '\0' \
+			|| !check_space(map->map[1]))
+			(write(2, "Error1 : a wall not found:/\n", 28), exit(1));
 			w++;
-		}
 	}
 	w = 0;
 	while (map->map[map->map_height - 1][w] != '\0')
@@ -101,6 +98,32 @@ void	check_empty_is_arounded(t_map *map)
 					|| !caractere_map_1(map->map[h - 1][w]) \
 					|| !caractere_map_1(map->map[h + 1][w]))
 					(write(2, "Error54 : is not arounded :/\n", 30), exit(1));
+			}
+			w++;
+		}
+		w = 0;
+		h++;
+	}
+}
+
+void	check_player_has_a_empty(t_map *map)
+{
+	int	h;
+	int	w;
+
+	h = 1;
+	w = 0;
+	while (h < map->map_height - 1)
+	{
+		while (map->map[h][w])
+		{
+			if (map->map[h][w] == 'N' || map->map[h][w] == 'S' || map->map[h][w] == 'W' || map->map[h][w] == 'E')
+			{
+				if (!caractere_map_2(map->map[h][w + 1]) \
+					|| !caractere_map_2(map->map[h][w - 1]) \
+					|| !caractere_map_2(map->map[h - 1][w]) \
+					|| !caractere_map_2(map->map[h + 1][w]))
+					(write(2, "Error : check map on player :/\n", 32), exit(1));
 			}
 			w++;
 		}
