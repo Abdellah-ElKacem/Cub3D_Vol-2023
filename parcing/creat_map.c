@@ -29,7 +29,7 @@ void	creat_map1(t_map *map, char *line, int fd, int len)
 			check = ft_strlen_f(line);
 			if (line[check - 1] == '\n' || !check_space(line))
 				(free(line), \
-					write(2, "Error:\nInvalid map!\n", 34), exit(1));
+					write(2, "Error:\nInvalid map!\n", 21), exit(1));
 		}
 		map->map[map->map_height] = ft_strdup_gnl(line);
 		map->map_height++;

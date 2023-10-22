@@ -8,6 +8,7 @@ SRC = main.c \
 	  tools/ft_isdigit.c \
 	  tools/ft_strcmp.c \
 	  tools/ft_strlen_fix.c \
+	  tools/ft_isalpha.c \
 	  parcing/colors_path_1.c \
 	  parcing/colors_path.c \
 	  parcing/creat_map.c \
@@ -15,6 +16,16 @@ SRC = main.c \
 	  parcing/pars_map.c \
 	  parcing/pars_utils.c \
 	  parcing/path_player.c \
+	  game/colors.c \
+	  game/cub3d.c \
+	  game/drawing.c \
+	  game/init.c \
+	  game/keys.c \
+	  game/keys2.c \
+	  game/movement.c \
+	  game/raycasting.c \
+	  game/raycasting2.c \
+	  game/rendring.c \
 
 
 OBJ = ${SRC:.c=.o}
@@ -38,7 +49,7 @@ ${NAME}: ${OBJ}
 		${CC} ${CFLAGS} -c $< -o $@
 
 mlxm:
-		make -C MLX42/build
+			make -C MLX42/build
 
 mlxclean:
 			make clean -C MLX42/build

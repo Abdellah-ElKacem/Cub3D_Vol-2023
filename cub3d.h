@@ -74,6 +74,7 @@ typedef struct s_map
 }				t_map;
 
 typedef struct s_mesurments {
+	double	wall_strip_height;
 	int		tile_size;
 	int		map_num_rows;
 	int		map_num_colms;
@@ -106,6 +107,44 @@ typedef struct s_player {
 	double			rotation_speed;
 }				t_player;
 
+int		texture_mapping(t_player *player, int **texture, int y, int i);
+void	render_projected_walls(t_player *player);
+void	draw_rectangles(t_player *player, int x, int **texture);
+void	cast_all_rays(t_player *player);
+void	cast_settings(t_player *player, int i);
+void	draw_player(t_player *player);
+void	draw_map(t_player *player);
+void	clear_win(t_player *player);
+void	loop(void *d);
+int		**fill_color_array(mlx_texture_t *side);
+double	distance_between_points(double x1, double y1, double x2, double y2);
+void	cast(t_player *player, int i);
+void	cast_settings(t_player *player, int i);
+void	cast_all_rays(t_player *player);
+int		has_wall(t_player *player, double x, double y);
+int		player_movement(t_player *player);
+void	key_func(mlx_key_data_t keydata, void *param);
+void	key_right(t_player *player, mlx_key_data_t keydata);
+void	key_left(t_player *player, mlx_key_data_t keydata);
+void	key_w(t_player *player, mlx_key_data_t keydata);
+void	key_s(t_player *player, mlx_key_data_t keydata);
+void	key_a(t_player *player, mlx_key_data_t keydata);
+void	key_d(t_player *player, mlx_key_data_t keydata);
+void	find_neemo(t_player *player);
+void	init_player(t_player *player);
+void	init_mesurments(t_player *player);
+void	init_textures(t_player *player);
+void	init_color(t_player *player);
+double	*cast_horizontal(t_player *player, int i);
+double	*cast_vertical(t_player *player, int i);
+void	hor_step_calculator(t_player *player, int i, double *xstep,
+			double *ystep);
+void	hor_step_calculator(t_player *player, int i, double *xstep,
+			double *ystep);
+void	ver_step_calculator(t_player *player, int i, double *xstep,
+			double *ystep);
+
+				/*parcing*/
 char	*ft_strdup_gnl(const char *s1);
 char	*ft_strdup_plus(const char *s1, int len, int start, int *end);
 void	parcing(t_player *player, char **av);
@@ -148,5 +187,6 @@ char	*get_next_line(int fd);
 char	*ft_rest_line(char *res);
 char	*ft_line(char *save);
 char	*ft_read(int fd, char *res);
+int		ft_isalpha(int c);
 
 #endif
