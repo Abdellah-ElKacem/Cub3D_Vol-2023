@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:41:50 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/18 10:50:57 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:11:51 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	put_colors_f(t_map *map, char *line, int *i)
 	v = 0;
 	idx = 1;
 	len = 0;
-	while (line[*i] == ' ')
+	while (line[*i] <= ' ')
 		(*i)++;
 	error_digit(line, i, &len, 0);
 	while (line[*i])
@@ -106,7 +106,7 @@ void	put_colors_f(t_map *map, char *line, int *i)
 			error_digit(line, i, &len, 1);
 		str = ft_strdup_plus(line, len, start, i);
 		(put_on_the_right_place_f(map, str, idx), idx++);
-		len = 0;
+		(free(str), len = 0);
 		if (line[*i] == ',')
 			v++;
 		(*i)++;

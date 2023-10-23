@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:51:40 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/18 10:51:56 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:11:51 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	put_colors_c(t_map *map, char *line, int *i)
 	v = 0;
 	idx = 1;
 	len = 0;
-	while (line[*i] == ' ')
+	while (line[*i] <= ' ')
 		(*i)++;
 	error_digit(line, i, &len, 0);
 	while (line[*i])
@@ -33,7 +33,7 @@ void	put_colors_c(t_map *map, char *line, int *i)
 			error_digit(line, i, &len, 1);
 		str = ft_strdup_plus(line, len, start, i);
 		(put_on_the_right_place_c(map, str, idx), idx++);
-		len = 0;
+		(free(str), len = 0);
 		if (line[*i] == ',')
 			v++;
 		(*i)++;
@@ -43,12 +43,12 @@ void	put_colors_c(t_map *map, char *line, int *i)
 
 void	check_colors(char *line, t_map *map, int *i)
 {
-	if (line[*i] == 'F')
+	if (line[*i] == 'F' && line[*i + 1] <= ' ')
 	{
 		*i += 1;
 		put_colors_f(map, line, i);
 	}
-	if (line[*i] == 'C')
+	if (line[*i] == 'C' && line[*i + 1] <= ' ')
 	{
 		*i += 1;
 		put_colors_c(map, line, i);

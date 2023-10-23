@@ -38,12 +38,12 @@ CC = cc
 
 RM = rm -f
 
-CFLAGS = -Wall -Wextra -Werror -Ofast
+CFLAGS = -Wall -Wextra -Werror -Ofast -g
 
 all: mlxm ${NAME}
 
 ${NAME}: ${OBJ}
-		${CC} ${CFLAGS} ${OBJ} ${mlxa} -lglfw -L"/usr/local/opt/glfw/lib" -o $@
+		${CC} ${CFLAGS} ${OBJ} ${mlxa} -lglfw -L"/goinfre/ael-kace/homebrew/opt/glfw/lib" -o $@
 
 %.o: %.c ${HEADER}
 		${CC} ${CFLAGS} -c $< -o $@

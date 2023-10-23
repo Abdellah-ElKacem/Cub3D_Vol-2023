@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:32:12 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/22 17:32:14 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:18:32 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,34 @@ int	has_wall(t_player *player, double x, double y)
 	return (player->map.map[i][j] == '1');
 }
 
-//check for side collision
+void	player_side_movement(t_player *player)
+{
+	if (player->side_direction == -1)
+	{
+		if (has_wall(player, player->x + cos(player->rotation_angle - M_PI / 2)
+				* player->move_speed,
+				player->y + sin(player->rotation_angle - M_PI / 2)
+				* player->move_speed))
+			return ;
+		player->x += cos(player->rotation_angle - M_PI / 2)
+			* player->move_speed;
+		player->y += sin(player->rotation_angle - M_PI / 2)
+			* player->move_speed;
+	}
+	else if (player->side_direction == 1)
+	{
+		if (has_wall(player, player->x + cos(player->rotation_angle + M_PI / 2)
+				* player->move_speed,
+				player->y + sin(player->rotation_angle + M_PI / 2)
+				* player->move_speed))
+			return ;
+		player->x += cos(player->rotation_angle + M_PI / 2)
+			* player->move_speed;
+		player->y += sin(player->rotation_angle + M_PI / 2)
+			* player->move_speed;
+	}
+}
+
 int	player_movement(t_player *player)
 {
 	int	move_step;
@@ -41,19 +68,6 @@ int	player_movement(t_player *player)
 		return (0);
 	player->x += cos(player->rotation_angle) * move_step;
 	player->y += sin(player->rotation_angle) * move_step;
-	if (player->side_direction == -1)
-	{
-		player->x += cos(player->rotation_angle - M_PI / 2)
-			* player->move_speed;
-		player->y += sin(player->rotation_angle - M_PI / 2)
-			* player->move_speed;
-	}
-	else if (player->side_direction == 1)
-	{
-		player->x += cos(player->rotation_angle + M_PI / 2)
-			* player->move_speed;
-		player->y += sin(player->rotation_angle + M_PI / 2)
-			* player->move_speed;
-	}
+	player_side_movement(player);
 	return (1);
 }

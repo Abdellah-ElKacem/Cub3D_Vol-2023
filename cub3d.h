@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:33:09 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/22 17:33:11 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:03:18 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,15 @@
 #  define BUFFER_SIZE 10
 # endif
 
+# define RED 4278190335
+# define GREEN 8421631
+# define GREY 2155905279
+# define YELLOW 4294902015
+# define BLACK 255
+
 typedef struct s_colors {
 	int		ceiling_color;
 	int		floor_color;
-	int		red;
-	int		green;
-	int		grey;
-	int		black;
-	int		yellow;
 }				t_colors;
 
 typedef struct s_data {

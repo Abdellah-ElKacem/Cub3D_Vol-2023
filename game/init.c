@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:31:46 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/22 17:31:52 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:01:30 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,4 @@ void	init_color(t_player *player)
 		| (player->map.f.g << 16)
 		| (player->map.f.b << 8)
 		| 0xFF;
-	player->color.red = 255 << 24 | 0 << 16 | 0 << 8 | 0xFF;
-	player->color.green = 0 << 24 | 128 << 16 | 128 << 8 | 0xFF;
-	player->color.grey = 128 << 24 | 128 << 16 | 128 << 8 | 0xFF;
-	player->color.yellow = 255 << 24 | 255 << 16 | 0 << 8 | 0xFF;
-	player->color.black = 0 << 24 | 0 << 16 | 0 << 8 | 0xFF;
 }

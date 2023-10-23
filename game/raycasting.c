@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:32:19 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/22 17:32:21 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:17:13 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	cast(t_player *player, int i)
 	}
 	player->ray[i].ray_distance = sqrt(pow(player->ray[i].x - player->x, 2)
 			+ pow(player->ray[i].y - player->y, 2));
+	(free(hor_wall_hit), free(ver_wall_hit));
 }
 
 void	cast_settings(t_player *player, int i)

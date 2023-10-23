@@ -6,13 +6,12 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:32:57 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/22 17:32:59 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:23:54 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-//RGB leaks
 int	main(int ac, char **av)
 {
 	t_player	player;

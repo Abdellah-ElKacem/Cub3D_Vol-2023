@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:31:40 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/22 17:31:42 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:08:05 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ void	draw_mini_map(t_player *player)
 			if (y >= 0 && ++x >= 0)
 			{
 				if (has_wall(player, x, y))
-					mlx_put_pixel(player->img.img, xmini, ymini, player->color.red);
+					mlx_put_pixel(player->img.img, xmini, ymini, RED);
 				else
-					mlx_put_pixel(player->img.img, xmini, ymini, player->color.grey);
+					mlx_put_pixel(player->img.img, xmini, ymini, GREY);
 			}
 			else
-				mlx_put_pixel(player->img.img, xmini, ymini, player->color.black);
+				mlx_put_pixel(player->img.img, xmini, ymini, BLACK);
 		}
 		y++;
 	}
@@ -70,14 +70,20 @@ void	draw_rectangles(t_player *player, int x, int **texture)
 
 void	draw_player(t_player *player)
 {
+	int	i;
+	int	j;
+
+	i = -5;
 	if (!player_movement(player))
 		return ;
 	cast_all_rays(player);
 	render_projected_walls(player);
 	draw_mini_map(player);
-	for(int i = -5; i < 5 ; i++)
+	while (i++ < 5)
 	{
-		for (int j = -5; j < 5; j++)
-			mlx_put_pixel(player->img.img, 100 - j, 100 - i, player->color.green);
+		j = -5;
+		while (j++ < 5)
+			mlx_put_pixel(player->img.img, 100 - j, \
+				100 - i, GREEN);
 	}
 }
