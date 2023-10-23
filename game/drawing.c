@@ -12,6 +12,35 @@
 
 #include "../cub3d.h"
 
+void	draw_mini_map(t_player *player)
+{
+	int	y;
+	int	x;
+	int	ymini;
+	int	xmini;
+
+	ymini = -1;
+	y = player->y - 100;
+	while (++ymini < 200)
+	{
+		x = player->x - 100 - 1;
+		xmini = -1;
+		while (++xmini < 200)
+		{
+			if (y >= 0 && ++x >= 0)
+			{
+				if (has_wall(player, x, y))
+					mlx_put_pixel(player->img.img, xmini, ymini, player->color.red);
+				else
+					mlx_put_pixel(player->img.img, xmini, ymini, player->color.grey);
+			}
+			else
+				mlx_put_pixel(player->img.img, xmini, ymini, player->color.black);
+		}
+		y++;
+	}
+}
+
 void	clear_win(t_player *player)
 {
 	if (player->img.img)
@@ -45,4 +74,10 @@ void	draw_player(t_player *player)
 		return ;
 	cast_all_rays(player);
 	render_projected_walls(player);
+	draw_mini_map(player);
+	for(int i = -5; i < 5 ; i++)
+	{
+		for (int j = -5; j < 5; j++)
+			mlx_put_pixel(player->img.img, 100 - j, 100 - i, player->color.green);
+	}
 }

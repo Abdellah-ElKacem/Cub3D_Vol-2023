@@ -43,7 +43,7 @@ CFLAGS = -Wall -Wextra -Werror -Ofast
 all: mlxm ${NAME}
 
 ${NAME}: ${OBJ}
-		${CC} ${CFLAGS} ${OBJ} ${mlxa} -lglfw -L"/Users/ael-kace/goinfre/homebrew/opt/glfw/lib" -o $@
+		${CC} ${CFLAGS} ${OBJ} ${mlxa} -lglfw -L"/usr/local/opt/glfw/lib" -o $@
 
 %.o: %.c ${HEADER}
 		${CC} ${CFLAGS} -c $< -o $@
