@@ -6,11 +6,25 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:31:40 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/23 22:08:05 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:45:33 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
+
+void	draw_mini_map_1(t_player *player)
+{
+	int	ymini;
+	int	xmini;
+
+	ymini = -1;
+	while (++ymini < 220)
+	{
+		xmini = -1;
+		while (++xmini < 220)
+			mlx_put_pixel(player->img.img, xmini, ymini, YELLOW);
+	}
+}
 
 void	draw_mini_map(t_player *player)
 {
@@ -19,15 +33,15 @@ void	draw_mini_map(t_player *player)
 	int	ymini;
 	int	xmini;
 
-	ymini = -1;
+	ymini = 9;
 	y = player->y - 100;
-	while (++ymini < 200)
+	while (++ymini < 210)
 	{
 		x = player->x - 100 - 1;
-		xmini = -1;
-		while (++xmini < 200)
+		xmini = 9;
+		while (++xmini < 210)
 		{
-			if (y >= 0 && ++x >= 0)
+			if (y >= 10 && ++x >= 10)
 			{
 				if (has_wall(player, x, y))
 					mlx_put_pixel(player->img.img, xmini, ymini, RED);
@@ -78,12 +92,13 @@ void	draw_player(t_player *player)
 		return ;
 	cast_all_rays(player);
 	render_projected_walls(player);
+	draw_mini_map_1(player);
 	draw_mini_map(player);
 	while (i++ < 5)
 	{
 		j = -5;
 		while (j++ < 5)
-			mlx_put_pixel(player->img.img, 100 - j, \
-				100 - i, GREEN);
+			mlx_put_pixel(player->img.img, 110 - j, \
+				110 - i, GREEN);
 	}
 }
