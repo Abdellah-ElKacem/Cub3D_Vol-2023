@@ -6,7 +6,7 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 10:45:14 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/21 16:13:26 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/10/23 22:11:51 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	creat_map1(t_map *map, char *line, int fd, int len)
 {
-	int	check;
 	int	h;
 
 	h = 1;
@@ -26,8 +25,7 @@ void	creat_map1(t_map *map, char *line, int fd, int len)
 	{
 		if (h == len - 1)
 		{
-			check = ft_strlen_f(line);
-			if (line[check - 1] == '\n' || !check_space(line))
+			if (line[ft_strlen_f(line) - 1] == '\n' || !check_space(line))
 				(free(line), \
 					write(2, "Error:\nInvalid map!\n", 21), exit(1));
 		}
@@ -39,6 +37,7 @@ void	creat_map1(t_map *map, char *line, int fd, int len)
 		h++;
 	}
 	map->map[map->map_height] = NULL;
+	close(fd);
 }
 
 void	check_path_and_color(t_map *map)
@@ -92,7 +91,7 @@ void	creat_struct_map(t_map *map, char **av)
 	i = 0;
 	while (line)
 	{
-		while (line[i] == ' ')
+		while (line[i] == ' ' || line[i] == '\t')
 			i++;
 		if (line[i] == 'N' || line[i] == 'S' \
 			|| line[i] == 'W' || line[i] == 'E')

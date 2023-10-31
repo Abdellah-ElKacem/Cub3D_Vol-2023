@@ -8,6 +8,7 @@ SRC = main.c \
 	  tools/ft_isdigit.c \
 	  tools/ft_strcmp.c \
 	  tools/ft_strlen_fix.c \
+	  tools/ft_isalpha.c \
 	  parcing/colors_path_1.c \
 	  parcing/colors_path.c \
 	  parcing/creat_map.c \
@@ -15,7 +16,16 @@ SRC = main.c \
 	  parcing/pars_map.c \
 	  parcing/pars_utils.c \
 	  parcing/path_player.c \
-
+	  game/colors.c \
+	  game/cub3d.c \
+	  game/drawing.c \
+	  game/init.c \
+	  game/keys.c \
+	  game/keys2.c \
+	  game/movement.c \
+	  game/raycasting.c \
+	  game/raycasting2.c \
+	  game/rendring.c \
 
 OBJ = ${SRC:.c=.o}
 
@@ -27,18 +37,19 @@ CC = cc
 
 RM = rm -f
 
-CFLAGS = -Wall -Wextra -Werror -Ofast #-g -fsanitize=address 
+CFLAGS = -Wall -Wextra -Werror
 
-all: mlxm ${NAME}
+all: mlxcm ${NAME}
 
 ${NAME}: ${OBJ}
-		${CC} ${CFLAGS} ${OBJ} ${mlxa} -lglfw -L"/Users/ael-kace/goinfre/homebrew/opt/glfw/lib" -o $@
+		${CC} ${CFLAGS} ${OBJ} ${mlxa} -lglfw -L"/goinfre/ael-kace/homebrew/opt/glfw/lib" -o $@
 
 %.o: %.c ${HEADER}
 		${CC} ${CFLAGS} -c $< -o $@
 
-mlxm:
-		make -C MLX42/build
+mlxcm:
+			@cd MLX42 && mkdir -p build && cd build && /goinfre/ael-kace/homebrew/opt/cmake/bin/cmake .. 1>/dev/null 2>/dev/null && make
+
 
 mlxclean:
 			make clean -C MLX42/build
