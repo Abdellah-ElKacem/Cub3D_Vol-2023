@@ -6,25 +6,11 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:32:57 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/31 15:34:28 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/11/01 18:37:19 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-void	moving_curs(double x_delta, double y_delta, void *param)
-{
-	t_player	*player;
-	int			x;
-
-	(void)y_delta;
-	player = param;
-	puts("here");
-	x_delta = player->rotation_angle;
-	x = player->turn_direction * (player->rotation_speed / 1.5);
-	player->rotation_angle += x;
-}
-	
 
 int	main(int ac, char **av)
 {
@@ -43,7 +29,6 @@ int	main(int ac, char **av)
 			player.mes.win_width, player.mes.win_height);
 	mlx_key_hook(player.img.mlx, key_func, &player);
 	mlx_loop_hook(player.img.mlx, loop, &player);
-	mlx_scroll_hook(player.img.mlx, moving_curs, &player);
 	mlx_loop(player.img.mlx);
 	return (0);
 }

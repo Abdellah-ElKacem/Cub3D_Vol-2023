@@ -6,11 +6,38 @@
 /*   By: ael-kace <ael-kace@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 17:31:58 by ael-kace          #+#    #+#             */
-/*   Updated: 2023/10/27 22:00:47 by ael-kace         ###   ########.fr       */
+/*   Updated: 2023/11/01 17:45:36 by ael-kace         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
+
+
+// int	moving_curs(t_player *player)
+// {
+// 	static int32_t	x_delta;
+// 	static int32_t	y_delta;
+// 	static int32_t	tmp;
+
+
+// 	tmp = x_delta;
+// // printf("%d -- %d\n", x_delta, y_delta);
+// 	mlx_get_mouse_pos(player->img.mlx, &x_delta, &y_delta);
+// 	mlx_set_mouse_pos(player->img.mlx, x_delta, y_delta);
+// // printf("---- %d -- %d\n", x_delta, y_delta);
+
+// 	if (x_delta == tmp ) {
+// 		return (0);
+// 	}
+// 	else {
+// 		if (x_delta < tmp) {
+// 			return (-1);
+// 		}
+// 		else{
+// 			return (1);
+// 		}
+// 	}
+// }
 
 void	key_d(t_player *player, mlx_key_data_t keydata)
 {
@@ -39,4 +66,6 @@ void	key_func(mlx_key_data_t keydata, void *param)
 		key_d(player, keydata);
 	if (keydata.key == MLX_KEY_ESCAPE)
 		exit (0);
+	// if (keydata.key == MLX_KEY_Q)
+	// 	return ;	
 }
